@@ -4,44 +4,38 @@ import logging
 logging.basicConfig(level=logging.INFO)
 import json
 
-RAW_DATA = '/cbica/comp_space/clinical_dmri_benchmark/data/PNC'
-OUTPUTS_QSIPREP = '/cbica/projects/clinical_dmri_benchmark/results/qsiprep_outputs/out/qsiprep'
+RAW_DATA = '/cbica/comp_space/clinical_dmri_benchmark/data/PNC/BIDS'
+OUTPUTS_QSIPREP = '/cbica/projects/clinical_dmri_benchmark/results/qsiprep_outputs'
 
 def find_at_least_one(string_list, pattern):
     return any([pattern in item for item in string_list])
 
-def get_completed_subjects(path_to_dwiqc: str):
-    """Reads the QC file from the output directory to determine subjects that
-    were already pre-processed.
+def get_completed_subjects(qsiprep_outputs: str, available_subjects: list):
+    """Iterate over the list of available subjects.
+	If a folder for this subject exists in the output directory and there is
+	no folder for this subject in the directory of failed subjects we assume the subject
+	has been successfully pre-processed.
 
     Args:
-      path_to_dwiqc: Path to the QC (qsiprep output 'dwiqc.json) file to be considered.
+      qsiprep_outputs: Path to folder containing all qsiprep outputs
+      available_subjects: List of all subjects that have the data necessary for pre-processing
 
     Returns:
-      List of subjects that have both run-01 and run-02 pre-processed.
+      List of subjects that have already been pre-processed.
     """
-    if os.path.exists(path_to_dwiqc) == False:
-        logging.info("No qc file found at " + path_to_dwiqc + ". Assuming no subjects have been processed so far.")
+    if os.path.exists(qsiprep_outputs) == False:
+        logging.info("No output folder found at " + qsiprep_outputs + ". Assuming no subjects have been processed so far.")
         return []
 
-    with open(path_to_dwiqc) as f:
-        dwiqc_json = json.load(f)
-    qc_data = dwiqc_json['subjects']
-
     processed_subIDs = []
-    for subject in qc_data:
-        processed_subIDs.append(subject['participant_id'])
+    for subject in available_subjects:
+        subject_in_outputs = os.path.exists(os.path.join(qsiprep_outputs, subject))
+        subject_in_failures = os.path.exists(os.path.join(qsiprep_outputs, 'failures', subject))
+        if (subject_in_outputs == True) and (subject_in_failures == False):
+            processed_subIDs.append(subject)
     processed_subIDs.sort()
-
-    # For each subject two runs were acquired. So each subject ID should appear twice in the QC file.
-    # If this is not the case, only one run has been processed.
-    subIDs_both_runs_processed = []
-    for processed_subID in processed_subIDs:
-        occurences_subid = processed_subIDs.count(processed_subID)
-        if occurences_subid == 2 and processed_subID not in subIDs_both_runs_processed:
-            subIDs_both_runs_processed.append(processed_subID)
     
-    return subIDs_both_runs_processed
+    return processed_subIDs
 
 def get_available_subjects(data_dir: str):
     """Checks which subjects have all necessary data for pre-processing available.
@@ -101,8 +95,9 @@ def check_for_mandatory_files(subject_folder: str):
     
     return True
 
-completed_subjects = get_completed_subjects(os.path.join(OUTPUTS_QSIPREP, 'dwiqc.json'))
 subjects_to_process = get_available_subjects(RAW_DATA)
+print(len(subjects_to_process))
+completed_subjects = get_completed_subjects(OUTPUTS_QSIPREP, subjects_to_process)
 
 needs_processing = sorted(set(subjects_to_process) - set(completed_subjects))
 logging.info(f"Found {len(needs_processing)} sessions to process")
