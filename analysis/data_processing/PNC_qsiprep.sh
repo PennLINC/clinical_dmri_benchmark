@@ -2,8 +2,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=6
-#SBATCH --mem=32G
-#SBATCH --time=10:00:00
+#SBATCH --mem=16G
+#SBATCH --time=03:00:00
 #SBATCH --output=../logs/pnc-%A_%a.log
 #SBATCH --array=1-1397
 
