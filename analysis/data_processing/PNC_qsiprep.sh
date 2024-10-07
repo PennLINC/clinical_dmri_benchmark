@@ -42,9 +42,6 @@ mkdir -p BIDS/${subid}/ses-PNC1/anat
 cp -r -L ${DATA_ROOT}/${subid}/ses-PNC1/dwi BIDS/${subid}/ses-PNC1/dwi
 cp -r -L ${DATA_ROOT}/${subid}/ses-PNC1/anat BIDS/${subid}/ses-PNC1/anat
 
-ls ${WORKDIR}
-ls ${WORKDIR}/BIDS
-ls ${WORKDIR}/BIDS/${subid}/ses-PNC1/dwi
 # Do the run
 qsiprep_failed=0
 singularity run \
@@ -86,4 +83,4 @@ mv -v ${PWD}/results/qsiprep/${subid}/* ${OUTPUTS}/${subid}/
 mv ${PWD}/results/qsiprep/${subid}.html ${OUTPUTS}/${subid}.html
 mv ${PWD}/results/qsiprep/dwiqc.json ${OUTPUTS}/dwiqc.json
 
-echo SUCCESSC
+echo SUCCESS
