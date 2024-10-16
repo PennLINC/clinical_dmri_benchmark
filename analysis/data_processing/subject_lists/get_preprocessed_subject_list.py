@@ -51,5 +51,5 @@ needs_reconstruction = sorted(set(preprocessed_subjects) - set(reconstructed_sub
 
 logging.info(f"Found {len(needs_reconstruction)} sessions that have been successfully pre-processed and not yet reconstructed using {QSIRECON_SUFFIX}.")
 
-with open("preprocessed_subject_list.txt", "w") as fhandle:
+with open("preprocessed_subject_list_" + QSIRECON_SUFFIX  + ".txt", "w") as fhandle:
     fhandle.write("\n".join(needs_reconstruction))
