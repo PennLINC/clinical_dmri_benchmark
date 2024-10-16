@@ -54,7 +54,6 @@ def get_available_subjects(data_dir: str):
     for subject_folder in subject_folders:
         if check_for_mandatory_files(os.path.join(data_dir, subject_folder)) == True:
             available_subjects.append(subject_folder)
-
     return available_subjects
 
 def check_for_mandatory_files(subject_folder: str):
@@ -95,12 +94,12 @@ def check_for_mandatory_files(subject_folder: str):
     
     return True
 
-subjects_to_process = get_available_subjects(RAW_DATA)
-print(len(subjects_to_process))
-completed_subjects = get_completed_subjects(OUTPUTS_QSIPREP, subjects_to_process)
+if __name__ == '__main__':
+    subjects_to_process = get_available_subjects(RAW_DATA)
+    completed_subjects = get_completed_subjects(OUTPUTS_QSIPREP, subjects_to_process)
 
-needs_processing = sorted(set(subjects_to_process) - set(completed_subjects))
-logging.info(f"Found {len(needs_processing)} sessions to process")
+    needs_processing = sorted(set(subjects_to_process) - set(completed_subjects))
+    logging.info(f"Found {len(needs_processing)} sessions to process")
 
-with open("subject_list.txt", "w") as fhandle:
-    fhandle.write("\n".join(needs_processing))
+    with open("subject_list.txt", "w") as fhandle:
+        fhandle.write("\n".join(needs_processing))
