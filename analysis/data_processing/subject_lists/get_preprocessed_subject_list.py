@@ -4,11 +4,17 @@ import logging
 logging.basicConfig(level=logging.INFO)
 import json
 from get_subject_list import get_completed_subjects, get_available_subjects
+import argparse
 
+# Setup argument parser
+parser = argparse.ArgumentParser(description="Reconstruction method")
+parser.add_argument('--recon_suffix', type=str, required=True, help='Reconstruction method (e.g., GQIautotrack)')
+args = parser.parse_args()
+
+QSIRECON_SUFFIX = args.recon_suffix
 RAW_DATA = '/cbica/comp_space/clinical_dmri_benchmark/data/PNC/BIDS'
 OUTPUTS_QSIPREP = '/cbica/projects/clinical_dmri_benchmark/results/qsiprep_outputs'
 OUTPUTS_QSIRECON = '/cbica/projects/clinical_dmri_benchmark/results/qsirecon_outputs'
-QSIRECON_SUFFIX = 'GQIautotrack'
 
 def get_reconstructed_subjects(qsirecon_outputs: str, preprocessed_subjects: list, qsirecon_suffix: str):
     """Iterate over the list of preprocessed subjects.
