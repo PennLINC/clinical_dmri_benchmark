@@ -1,0 +1,16 @@
+anatomical: []
+atlases: []
+name: mrtrix_singleshell_ss3t
+nodes:
+-   action: csd
+    input: qsirecon
+    name: ss3t_csd
+    parameters:
+        fod:
+            algorithm: ss3t
+        mtnormalize: true
+        response:
+            algorithm: dhollander
+    qsirecon_suffix: SS3T
+    software: MRTrix3
+space: T1w

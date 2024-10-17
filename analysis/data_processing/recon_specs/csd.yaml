@@ -1,0 +1,17 @@
+anatomical: []
+atlases: []
+name: mrtrix_singleshell_CSD
+nodes:
+-   action: csd
+    input: qsirecon
+    name: csd
+    parameters:
+        fod:
+            algorithm: csd
+            max_sh: 6
+        mtnormalize: true
+        response:
+            algorithm: dhollander
+    qsirecon_suffix: CSD
+    software: MRTrix3
+space: T1w
