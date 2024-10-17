@@ -13,7 +13,7 @@ nodes:
     name: autotrackgqi
     parameters:
         tolerance: 22,26,30
-        track_id: Commissure_CorpusCallosum_Body
+        track_id: Association,Projection,Commissure
         track_voxel_ratio: 2.0
         yield_rate: 1.0e-06
     qsirecon_suffix: GQIautotrack
