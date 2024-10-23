@@ -2,10 +2,10 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=6
-#SBATCH --mem=9G
-#SBATCH --time=06:00:00
+#SBATCH --mem=8G
+#SBATCH --time=02:00:00
 #SBATCH --output=../logs/pnc-%A_%a.log
-#SBATCH --array=1-1
+#SBATCH --array=1-1396
 
 SIMG="${HOME}/images/qsirecon-0.23.2.sif"
 FREESURFER_DIR="${HOME}/software/freesurfer"
@@ -54,7 +54,7 @@ singularity run --containall \
     "${PWD}/results" \
     participant \
     --fs-license-file "${PWD}/license.txt" \
-    --recon-spec "${RECON_SPEC}" \
+    --recon-spec "${PWD}/ss3t.yaml" \
     --participant-label "${subid}" \
     --stop-on-first-crash \
     -w "${PWD}/work" \
