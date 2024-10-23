@@ -54,10 +54,10 @@ def convert_trk_to_tck(preprocessed_dwi: str, trk_file: str):
     return
 
 def aggregate_atk_results(path_atk_outputs: str, bundles: list, subid: str, path_qsiprep_data: str):    
-    stats_rows = []
-    found_bundle_files = []
-    found_bundle_names = []
     for run in ["run-01", "run-02"]:
+        stats_rows = []
+        found_bundle_files = []
+        found_bundle_names = []
         for bundle in bundles:
             bundle_file_name = os.path.join(path_atk_outputs, bundle, subid + "_ses-PNC1_" + run + "_space-T1w_dwimap." + bundle + ".trk.gz")
             stat_file_name = os.path.join(path_atk_outputs, bundle, subid + "_ses-PNC1_" + run + "_space-T1w_dwimap." + bundle + ".stat.txt")
@@ -69,22 +69,24 @@ def aggregate_atk_results(path_atk_outputs: str, bundles: list, subid: str, path
                 found_bundle_files.append(bundle_file_name)
                 found_bundle_names.append(bundle)
         stats_df = pd.DataFrame(stats_rows)
-        stats_df.to_csv(os.path.join(path_atk_outputs, subid + "_ses-PNC1_" + run + "_space-T1w_bundlestats.csv"))
-        # TODO: Add code to delete old stat files
+        stats_df.to_csv(os.path.join(path_atk_outputs, subid + "_ses-PNC1_" + run + "_space-T1w_bundlestats.csv"), index=False)
         for bundle_file, bundle_name in zip(found_bundle_files, found_bundle_names):
             new_bundle_file = os.path.join(path_atk_outputs, subid + "_ses-PNC1_" + run + "_space-T1w_bundle-" + bundle_name.replace("_", "") + "_streamlines.trk.gz")
             shutil.move(bundle_file, new_bundle_file)
             preprocessed_dwi = os.path.join(path_qsiprep_data, subid + "_ses-PNC1_" + run + "_space-T1w_desc-preproc_dwi.nii.gz")
             convert_trk_to_tck(preprocessed_dwi, new_bundle_file)
-            # TODO: Code to delete trk file
-    # TODO: Code to delete bundle folder (this can only be done after both runs have been processed.)
+            os.remove(new_bundle_file)
+    for bundle in bundles:
+        bundle_folder = os.path.join(path_atk_outputs, bundle)
+        if os.path.exists(bundle_folder):
+            shutil.rmtree(bundle_folder)
 
     return
 
 if __name__ == '__main__':
-    BUNDLE_NAMES = "${HOME}/clinical_dmri_benchmark/data/bundle_names.txt"
+    BUNDLE_NAMES = "/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/data/bundle_names.txt"
 
-    with open('bundles.txt', 'r') as f:
+    with open(BUNDLE_NAMES, 'r') as f:
         bundles = f.read().splitlines()
 
     # Set up argument parsing

@@ -2,10 +2,10 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=12
-#SBATCH --mem=9G
-#SBATCH --time=06:00:00
+#SBATCH --mem=5G
+#SBATCH --time=07:00:00
 #SBATCH --output=../logs/pnc-%A_%a.log
-#SBATCH --array=1-1
+#SBATCH --array=1-1396
 
 [ -z "${JOB_ID}" ] && JOB_ID=TEST
 
@@ -18,11 +18,11 @@ fi
 # fail whenever something is fishy, use -x to get verbose logfiles
 set -e -u -x
 
+SUBJECT_LIST="${HOME}/clinical_dmri_benchmark/analysis/data_processing/subject_lists/preprocessed_subject_list_SS3Tautotrack.txt"
 # Get the subject id from the call
 subid=$(head -n "${SLURM_ARRAY_TASK_ID}" "${SUBJECT_LIST}" | tail -n 1)
 
 SIMG="${HOME}/images/qsirecon-0.23.2.sif"
-SUBJECT_LIST="${HOME}/clinical_dmri_benchmark/analysis/data_processing/subject_lists/preprocessed_subject_list_SS3Tautotrack.txt"
 GQI_DATA_ROOT="${HOME}/results/qsirecon_outputs/qsirecon-GQIautotrack/${subid}/ses-PNC1/dwi"
 SS3T_DATA_ROOT="${HOME}/results/qsirecon_outputs/qsirecon-SS3T/${subid}/ses-PNC1/dwi"
 OUTPUTS="${HOME}/results/qsirecon_outputs/qsirecon-SS3Tautotrack"
@@ -35,6 +35,7 @@ mkdir -p "${WORKDIR}"
 cd "${WORKDIR}"
 mkdir -p ss3t_atk_data
 mkdir -p preprocessed_data
+mkdir -p ss3t_data
 
 cp -r "${PREPROCESSED_DATA_ROOT}/${subid}" "preprocessed_data/${subid}"
 
@@ -43,13 +44,14 @@ for run in run-01 run-02; do
     # Copy the files we need from the source directory
     cp "${SS3T_DATA_ROOT}/${subid}_ses-PNC1_${run}_space-T1w_model-ss3t_param-fod_label-WM_dwimap.mif.gz" ss3t_data/
     # Run command
-    singularity exec --containall \
+    gunzip -t ss3t_data/sub-1317462_ses-PNC1_run-01_space-T1w_model-ss3t_param-fod_label-WM_dwimap.mif.gz
+    singularity exec \
         -B "${PWD}/ss3t_data":/ss3t_data \
         -B "${PWD}/ss3t_atk_data":/ss3t_atk_data \
         "${SIMG}" \
-        mif2fib --mif "/ss3t_data/${subid}_ses-PNC1_${run}_space-T1w_model-ss3t_mfp-FOD_label-WM_dwimap.mif.gz" \
+        mif2fib --mif "/ss3t_data/${subid}_ses-PNC1_${run}_space-T1w_model-ss3t_param-fod_label-WM_dwimap.mif.gz" \
         --fib "/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib"
-    gzip "/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib"
+    gzip "${PWD}/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib"
 done
 # Remove files we no longer need
 rm -r ss3t_data
@@ -57,33 +59,29 @@ rm -r ss3t_data
 # 2) Copy gqi .map file to the ss3t_atk directory and rename to match DSIStudio convention
 for run in run-01 run-02; do
     cp "${GQI_DATA_ROOT}/${subid}_ses-PNC1_${run}_space-T1w_mapping.map.gz" \
-        "/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib.gz.icbm152_adult.map.gz"
+        "ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib.gz.icbm152_adult.map.gz"
 done
 
 # 3) Run autotrack for both runs
-# TODO: Is there a way to pass number of CPUs here?
 for run in run-01 run-02; do
     singularity exec --containall \
         -B "${PWD}/ss3t_atk_data":/ss3t_atk_data \
         "${SIMG}" \
         dsi_studio --action=atk \
-        --source "/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib.gz" \
+        --source="/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib.gz" \
         --track_id=Association,Projection,Commissure \
         --track_voxel_ratio=2.0 \
         --yield_rate=1.0e-06 \
         --tolerance=22,26,30 \
         --trk_format=trk.gz
     # rename mapping file to match qsirecon conventions
-    mv "/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib.gz.icbm152_adult.map.gz" \
-        "/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_mapping.map.gz"
+    mv "${PWD}/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib.gz.icbm152_adult.map.gz" \
+        "${PWD}/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_mapping.map.gz"
 done
 
 # 4.1) Rearrange and rename bundle files and bundle stats to match qsirecon conventions
 # 4.2) Convert trk.gz to tck.gz
-python3 ${PYTHON_HELPER_SCRIPT} \
-    --path_atk_outputs "${PWD}/ss3t_atk_data" \
-    --subid "${subid}" \
-    --path_qsiprep_data "${PWD}/preprocessed_data/${subid}"
+python3 ${PYTHON_HELPER_SCRIPT} "${PWD}/ss3t_atk_data" "${subid}" "${PWD}/preprocessed_data/${subid}/ses-PNC1/dwi"
 
 # 5) Copy to output directory
 mkdir -p "${OUTPUTS}/${subid}"
