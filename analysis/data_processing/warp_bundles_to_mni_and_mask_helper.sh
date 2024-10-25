@@ -72,7 +72,7 @@ do
         tckmap "${PATH_MNI_BUNDLE}" "${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" --template /mni/ref_image.nii --contrast tdi -force
 
         mrthreshold -abs 0 -comparison gt "${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" \
-        "${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" -force
+            "${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" -force
 
         gzip "${PATH_MNI_BUNDLE}"
         gzip "${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii"
