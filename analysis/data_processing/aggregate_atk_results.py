@@ -71,7 +71,7 @@ def aggregate_atk_results(path_atk_outputs: str, bundles: list, subid: str, path
         stats_df = pd.DataFrame(stats_rows)
         stats_df.to_csv(os.path.join(path_atk_outputs, subid + "_ses-PNC1_" + run + "_space-T1w_bundlestats.csv"), index=False)
         for bundle_file, bundle_name in zip(found_bundle_files, found_bundle_names):
-            new_bundle_file = os.path.join(path_atk_outputs, subid + "_ses-PNC1_" + run + "_space-T1w_bundle-" + bundle_name.replace("_", "") + "_streamlines.trk.gz")
+            new_bundle_file = os.path.join(path_atk_outputs, subid + "_ses-PNC1_" + run + "_space-T1w_bundle-" + bundle_name.replace("_", "").replace("-", "") + "_streamlines.trk.gz")
             shutil.move(bundle_file, new_bundle_file)
             preprocessed_dwi = os.path.join(path_qsiprep_data, subid + "_ses-PNC1_" + run + "_space-T1w_desc-preproc_dwi.nii.gz")
             convert_trk_to_tck(preprocessed_dwi, new_bundle_file)
