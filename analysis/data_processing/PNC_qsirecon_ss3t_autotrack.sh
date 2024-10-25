@@ -44,12 +44,12 @@ for run in run-01 run-02; do
     # Copy the files we need from the source directory
     cp "${SS3T_DATA_ROOT}/${subid}_ses-PNC1_${run}_space-T1w_model-ss3t_param-fod_label-WM_dwimap.mif.gz" ss3t_data/
     # Run command
-    gunzip -t ss3t_data/sub-1317462_ses-PNC1_run-01_space-T1w_model-ss3t_param-fod_label-WM_dwimap.mif.gz
+    gunzip -t "ss3t_data/${subid}_ses-PNC1_run-01_space-T1w_model-ss3t_param-fod_label-WM_dwimap.mif.gz"
     singularity exec \
         -B "${PWD}/ss3t_data":/ss3t_data \
         -B "${PWD}/ss3t_atk_data":/ss3t_atk_data \
         "${SIMG}" \
-        mif2fib --mif "/ss3t_data/${subid}_ses-PNC1_${run}_space-T1w_model-ss3t_param-fod_label-WM_dwimap.mif.gz" \
+        mif2fib --mif "/ss3t_data/${subid}_ses-PNC1_${run}_space-T1w_model-ss3t_param-fod_label-WM_dwimap.mif" \
         --fib "/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib"
     gzip "${PWD}/ss3t_atk_data/${subid}_ses-PNC1_${run}_space-T1w_dwimap.fib"
 done
