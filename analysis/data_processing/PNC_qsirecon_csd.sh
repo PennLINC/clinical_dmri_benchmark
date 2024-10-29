@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=6
-#SBATCH --mem=9G
-#SBATCH --time=06:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=6G
+#SBATCH --time=05:00:00
 #SBATCH --output=../logs/pnc-%A_%a.log
-#SBATCH --array=1-1
+#SBATCH --array=1-2
 
 SIMG="${HOME}/images/qsirecon-0.23.2.sif"
 FREESURFER_DIR="${HOME}/software/freesurfer"
@@ -14,6 +14,8 @@ DATA_ROOT="/cbica/comp_space/clinical_dmri_benchmark/data/PNC/BIDS"
 PREPROCESSED_DATA_ROOT="${HOME}/results/qsiprep_outputs"
 OUTPUTS="${HOME}/results/qsirecon_outputs/qsirecon-CSD"
 RECON_SPEC="${HOME}/clinical_dmri_benchmark/analysis/data_processing/recon_specs/csd.yaml"
+UPDATED_MRTRIX_FILE="${HOME}/clinical_dmri_benchmark/analysis/data_processing/updated_qsirecon_files/mrtrix.py"
+UPDATED_BIBTEX_FILE="${HOME}/clinical_dmri_benchmark/analysis/data_processing/updated_qsirecon_files/boilerplate.bib"
 
 [ -z "${JOB_ID}" ] && JOB_ID=TEST
 
@@ -46,15 +48,17 @@ export TEMPLATEFLOW_HOME=/cbica/projects/clinical_dmri_benchmark/data/TEMPLATEFL
 # Do the run
 qsirecon_failed=0
 singularity run --containall \
+    -B "${UPDATED_MRTRIX_FILE}":"/opt/conda/envs/qsiprep/lib/python3.10/site-packages/qsirecon/workflows/recon/mrtrix.py" \
+    -B "${UPDATED_BIBTEX_FILE}":"/opt/conda/envs/qsiprep/lib/python3.10/site-packages/qsirecon/data/boilerplate.bib" \
     -B "${PWD}" \
-    -B "${TEMPLATEFLOW_HOME}:/templateflow_home" \
+    -B "${TEMPLATEFLOW_HOME}":/templateflow_home \
     --env "TEMPLATEFLOW_HOME=/templateflow_home" \
     "${SIMG}" \
     "${PWD}/preprocessed_data" \
     "${PWD}/results" \
     participant \
     --fs-license-file "${PWD}/license.txt" \
-    --recon-spec "${RECON_SPEC}" \
+    --recon-spec "${PWD}/csd.yaml" \
     --participant-label "${subid}" \
     --stop-on-first-crash \
     -w "${PWD}/work" \
