@@ -9,7 +9,7 @@ import numpy as np
 import glob
 
 def stat_txt_to_df(stat_txt_file: str, bundle_name: str):
-   """ Converts the DSIStudio stats txt file to a line of a dataframe.
+    """ Converts the DSIStudio stats txt file to a line of a dataframe.
     If no bundle stats file could be found. Only the bundle name will be indicated
     in the row of the dataframe
     --- Adapted from qsirecon v 0.23.2 ---
@@ -137,4 +137,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     aggregate_atk_results(args.path_atk_outputs, bundles, args.subid, args.path_qsiprep_data)
-
