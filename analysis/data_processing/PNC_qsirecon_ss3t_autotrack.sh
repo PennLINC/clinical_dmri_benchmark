@@ -2,10 +2,10 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=12
-#SBATCH --mem=12G
-#SBATCH --time=10:00:00
+#SBATCH --mem=6G
+#SBATCH --time=08:00:00
 #SBATCH --output=../logs/pnc-%A_%a.log
-#SBATCH --array=1-2
+#SBATCH --array=1-1395
 
 [ -z "${JOB_ID}" ] && JOB_ID=TEST
 
@@ -75,7 +75,8 @@ for run in run-01 run-02; do
         --track_voxel_ratio=2.0 \
         --yield_rate=1.0e-06 \
         --tolerance=22,26,30 \
-        --trk_format=trk.gz
+        --trk_format=trk.gz \
+        --thread_count="${SLURM_JOB_CPUS_PER_NODE}"
     # rename mapping file to match qsirecon conventions
     mv "${PWD}/ss3t_atk_data/${file_name_prefix}_dwimap.fib.gz.icbm152_adult.map.gz" \
         "${PWD}/ss3t_atk_data/${file_name_prefix}_mapping.map.gz"
@@ -86,7 +87,7 @@ done
 python3 ${PYTHON_HELPER_SCRIPT} "${PWD}/ss3t_atk_data" "${subid}" "${PWD}/preprocessed_data/${subid}/ses-PNC1/dwi"
 
 # 5) Copy to output directory
-mkdir -p "${OUTPUTS}/${subid}"
-mv -v "${PWD}/ss3t_atk_data"/* "${OUTPUTS}/${subid}/"
+mkdir -p "${OUTPUTS}/${subid}/ses-PNC1/dwi"
+mv -v "${PWD}/ss3t_atk_data"/* "${OUTPUTS}/${subid}/ses-PNC1/dwi"
 echo SUCCESS
 
