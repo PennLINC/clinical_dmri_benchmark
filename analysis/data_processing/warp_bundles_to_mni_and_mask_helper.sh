@@ -1,15 +1,17 @@
 #!/bin/bash
 
+set -e -u -x
+
 # the subject ID will be passed to this script as argument
 SUBID="${1}"
 ROOT_BUNDLES_MNI=/root_bundles/MNI
 mkdir -p "${ROOT_BUNDLES_MNI}"
 
-PATH_H5_TRANSFORM="/root_prep/${SUBID}/anat/${SUBID}_from-MNI152NLin2009cAsym_to-T1w_mode-image_xfm.h5"
+PATH_H5_TRANSFORM="/root_prep/anat/${SUBID}_from-MNI152NLin2009cAsym_to-T1w_mode-image_xfm.h5"
 H5_TRANSFORM_NAME_PREFIX="${SUBID}_from-MNI152NLin2009cAsym_to-T1w_mode-image_xfm"
 
 # Create a directory to store the mrtrix transform files and intermediate transforms
-ROOT_MRTRIX_TRANSFORM_FILES="/root_prep/${SUBID}/anat/mrtrix_transform_files"
+ROOT_MRTRIX_TRANSFORM_FILES="/root_prep/anat/mrtrix_transform_files"
 mkdir -p "${ROOT_MRTRIX_TRANSFORM_FILES}"
 cd "${ROOT_MRTRIX_TRANSFORM_FILES}"
 
@@ -29,7 +31,10 @@ for run in run-01 run-02;
 do
     ROOT_MRTRIX_TRANSFORM_FILES_RUN="${ROOT_MRTRIX_TRANSFORM_FILES}/${run}"
     mkdir -p ${ROOT_MRTRIX_TRANSFORM_FILES_RUN}
-    PATH_DWI_IMAGE_IN="/root_prep/${SUBID}/ses-PNC1/dwi/${SUBID}_ses-PNC1_${run}_space-T1w_dwiref.nii.gz"
+    source_file=$(ls /root_prep/ses-PNC1/dwi/${SUBID}_ses-PNC1*_${run}_space-T1w_dwiref.nii.gz  2> /dev/null)
+    file_name=$(basename "$source_file")
+    file_name_prefix="${file_name%%_space-T1w_*}_space"
+    PATH_DWI_IMAGE_IN="/root_prep/ses-PNC1/dwi/${file_name_prefix}-T1w_dwiref.nii.gz"
     PATH_AFFINE_TRANSFORM=${ROOT_MRTRIX_TRANSFORM_FILES}/01_${H5_TRANSFORM_NAME_PREFIX}_AffineTransform.mat
     PATH_WARP_FIELD=${ROOT_MRTRIX_TRANSFORM_FILES}/00_${H5_TRANSFORM_NAME_PREFIX}_DisplacementFieldtransform.nii.gz
 
@@ -53,28 +58,34 @@ do
     for bundle in "${bundle_array[@]}";
     do
         BUNDLE=${bundle//[_-]/}
-        PATH_NATIVE_BUNDLE="/root_bundles/${SUBID}_ses-PNC1_${run}_space-T1w_bundle-${BUNDLE}_streamlines.tck.gz"
-        if [ ! -f "${PATH_NATIVE_BUNDLE}" ]; then
-            echo "File ${PATH_NATIVE_BUNDLE} does not exist, skipping."
-            continue
-        fi
-        PATH_MNI_BUNDLE="${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_streamlines.tck"
+        bundle_path=/root_bundles/${SUBID}_ses-PNC1*_${run}_space-T1w_bundle-${BUNDLE}_streamlines.tck.gz
+        if compgen -G "${bundle_path}" > /dev/null; then
+            PATH_NATIVE_BUNDLE=$(ls ${bundle_path})
+            file_name=$(basename "$PATH_NATIVE_BUNDLE")
+            file_name_prefix="${file_name%%_space-T1w_*}_space"
+
+            PATH_MNI_BUNDLE="${ROOT_BUNDLES_MNI}/${file_name_prefix}-MNI152NLin2009cAsym_bundle-${BUNDLE}_streamlines.tck"
         
-        gunzip "${PATH_NATIVE_BUNDLE}"
-        4. Transform bundle file
-        tcktransform "/root_bundles/${SUBID}_ses-PNC1_${run}_space-T1w_bundle-${BUNDLE}_streamlines.tck" \
-        "${ROOT_MRTRIX_TRANSFORM_FILES_RUN}/inv_mrtrix_warp_corrected.mif" \
-        "${PATH_MNI_BUNDLE}" -force
+            gunzip -f "${PATH_NATIVE_BUNDLE}"
+            # 4. Transform bundle file
+            tcktransform "/root_bundles/${file_name_prefix}-T1w_bundle-${BUNDLE}_streamlines.tck" \
+            "${ROOT_MRTRIX_TRANSFORM_FILES_RUN}/inv_mrtrix_warp_corrected.mif" \
+            "${PATH_MNI_BUNDLE}" -force
 
-        gzip "/root_bundles/${SUBID}_ses-PNC1_${run}_space-T1w_bundle-${BUNDLE}_streamlines.tck"
+            gzip "/root_bundles/${file_name_prefix}-T1w_bundle-${BUNDLE}_streamlines.tck"
 
-        # 5. calculate binary mask of bundle in MNI space
-        tckmap "${PATH_MNI_BUNDLE}" "${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" --template /mni/ref_image.nii --contrast tdi -force
+            # 5. calculate binary mask of bundle in MNI space
+            tckmap "${PATH_MNI_BUNDLE}" "${ROOT_BUNDLES_MNI}/${file_name_prefix}-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" --template /mni/ref_image.nii --contrast tdi -force
 
-        mrthreshold -abs 0 -comparison gt "${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" \
-            "${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" -force
+            mrthreshold -abs 0 -comparison gt "${ROOT_BUNDLES_MNI}/${file_name_prefix}-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" \
+                "${ROOT_BUNDLES_MNI}/${file_name_prefix}-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii" -force
 
-        gzip "${PATH_MNI_BUNDLE}"
-        gzip "${ROOT_BUNDLES_MNI}/${SUBID}_ses-PNC1_${run}_space-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii"
+            gzip "${PATH_MNI_BUNDLE}"
+            gzip "${ROOT_BUNDLES_MNI}/${file_name_prefix}-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii"
+
+            else
+                echo "File ${PATH_NATIVE_BUNDLE} does not exist, skipping."
+                continue
+            fi
     done
 done
