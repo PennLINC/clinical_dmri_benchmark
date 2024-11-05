@@ -52,11 +52,10 @@ def get_reconstructed_subjects(qsirecon_outputs: str, qsirecon_suffix: str):
     if "failures" in reconstructed_subIDs:
         reconstructed_subIDs.remove("failures")
 
-    for subid in reconstructed_subIDs:
-        if os.path.exists(
-            os.path.join(full_path_qsirecon_outputs, subid, "ses-PNC1", "dwi", "MNI")
-        ):
-            reconstructed_subIDs.remove(subid)
+    reconstructed_subIDs = [
+        subid for subid in reconstructed_subIDs
+        if not os.path.exists(os.path.join(full_path_qsirecon_outputs, subid, "ses-PNC1", "dwi", "MNI"))
+    ]
 
     return reconstructed_subIDs
 
