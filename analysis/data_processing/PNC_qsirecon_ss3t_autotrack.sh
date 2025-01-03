@@ -3,9 +3,9 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=6G
-#SBATCH --time=08:00:00
+#SBATCH --time=12:00:00
 #SBATCH --output=../logs/pnc-%A_%a.log
-#SBATCH --array=1-1395
+#SBATCH --array=1-1
 
 [ -z "${JOB_ID}" ] && JOB_ID=TEST
 
@@ -24,7 +24,8 @@ GQI_DATA_ROOT="${HOME}/results/qsirecon_outputs/qsirecon-GQIautotrack/${subid}/s
 SS3T_DATA_ROOT="${HOME}/results/qsirecon_outputs/qsirecon-SS3T/${subid}/ses-PNC1/dwi"
 OUTPUTS="${HOME}/results/qsirecon_outputs/qsirecon-SS3Tautotrack"
 PREPROCESSED_DATA_ROOT="${HOME}/results/qsiprep_outputs"
-PYTHON_HELPER_SCRIPT="${HOME}/clinical_dmri_benchmark/analysis/data_processing/aggregate_atk_results.py"
+PYTHON_HELPER_SCRIPT_1="${HOME}/clinical_dmri_benchmark/analysis/data_processing/combine_gqi_csd_fibs.py"
+PYTHON_HELPER_SCRIPT_2="${HOME}/clinical_dmri_benchmark/analysis/data_processing/aggregate_atk_results.py"
 
 # Use $TMP as the workdir
 WORKDIR="${TMP}/job-${JOB_ID}_${subid}"
@@ -52,12 +53,25 @@ for run in run-01 run-02; do
         "${SIMG}" \
         mif2fib --mif /ss3t_data/${file_name_prefix}_model-ss3t_param-fod_label-WM_dwimap.mif \
         --fib "/ss3t_atk_data/${file_name_prefix}_dwimap.fib"
-    gzip "${PWD}/ss3t_atk_data/${file_name_prefix}_dwimap.fib"
 done
 # Remove files we no longer need
 rm -r ss3t_data
 
-# 2) Copy gqi .map file to the ss3t_atk directory and rename to match DSIStudio convention
+# 2) Add the DTI maps from the GQI fib file to the ss3t fib file
+for run in run-01 run-02; do
+    gqi_fib_file=$(ls ${GQI_DATA_ROOT}/${subid}_ses-PNC1*_${run}_space-T1w_dwimap.fib.gz)
+    gqi_file_name=$(basename "$gqi_fib_file")
+    gqi_file_name_prefix=${gqi_file_name%%_space-T1w_*}_space-T1w
+    ss3t_file=$(ls ss3t_atk_data/${subid}_ses-PNC1*_${run}_space-T1w_dwimap.fib)
+    ss3t_file_name=$(basename "$ss3t_file")
+    ss3t_file_name_prefix=${ss3t_file_name%%_space-T1w_*}_space-T1w
+    gunzip ${gqi_fib_file}
+    python3 ${PYTHON_HELPER_SCRIPT_1} --gqi_path "${GQI_DATA_ROOT}/${gqi_file_name_prefix}_dwimap.fib" --csd_path "ss3t_atk_data/${ss3t_file_name_prefix}_dwimap.fib"
+    gzip "${GQI_DATA_ROOT}/${gqi_file_name_prefix}_dwimap.fib"
+    gzip "ss3t_atk_data/${ss3t_file_name_prefix}_dwimap.fib"
+done
+
+# 3) Copy gqi .map file to the ss3t_atk directory and rename to match DSIStudio convention
 for run in run-01 run-02; do
     source_file=$(ls ${GQI_DATA_ROOT}/${subid}_ses-PNC1*_${run}_space-T1w_mapping.map.gz)
     file_name=$(basename "$source_file")
@@ -65,7 +79,7 @@ for run in run-01 run-02; do
     cp ${source_file} \
         "${PWD}/ss3t_atk_data/${file_name_prefix}_dwimap.fib.gz.icbm152_adult.map.gz"
 
-    # 3) Run autotrack for both runs
+    # 4) Run autotrack for both runs
     singularity exec --containall \
         -B "${PWD}/ss3t_atk_data":/ss3t_atk_data \
         "${SIMG}" \
@@ -82,11 +96,11 @@ for run in run-01 run-02; do
         "${PWD}/ss3t_atk_data/${file_name_prefix}_mapping.map.gz"
 done
 
-# 4.1) Rearrange and rename bundle files and bundle stats to match qsirecon conventions
-# 4.2) Convert trk.gz to tck.gz
-python3 ${PYTHON_HELPER_SCRIPT} "${PWD}/ss3t_atk_data" "${subid}" "${PWD}/preprocessed_data/${subid}/ses-PNC1/dwi"
+# 5.1) Rearrange and rename bundle files and bundle stats to match qsirecon conventions
+# 5.2) Convert trk.gz to tck.gz
+python3 ${PYTHON_HELPER_SCRIPT_2} "${PWD}/ss3t_atk_data" "${subid}" "${PWD}/preprocessed_data/${subid}/ses-PNC1/dwi"
 
-# 5) Copy to output directory
+# 6) Copy to output directory
 mkdir -p "${OUTPUTS}/${subid}/ses-PNC1/dwi"
 mv -v "${PWD}/ss3t_atk_data"/* "${OUTPUTS}/${subid}/ses-PNC1/dwi"
 echo SUCCESS
