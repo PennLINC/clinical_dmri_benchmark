@@ -3,13 +3,13 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=2G
-#SBATCH --time=00:25:00
+#SBATCH --time=01:30:00
 #SBATCH --output=../logs/pnc-%A_%a.log
-#SBATCH --array=1-1396
+#SBATCH --array=1-1397
 
 # The recon_suffix is passed as the first positional argument such that the script can be used for different reconstruction methods
 RECON_SUFFIX="${1}"
-SUBJECT_LIST="${HOME}/clinical_dmri_benchmark/analysis/data_processing/subject_lists/reconstructed_subject_list_GQIautotrack.txt"
+SUBJECT_LIST="${HOME}/clinical_dmri_benchmark/analysis/data_processing/subject_lists/reconstructed_subject_list_${RECON_SUFFIX}.txt"
 
 [ -z "${JOB_ID}" ] && JOB_ID=TEST
 
