@@ -2,8 +2,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=3G
-#SBATCH --time=03:00:00
+#SBATCH --mem=5G
+#SBATCH --time=05:00:00
 #SBATCH --output=../logs/pnc-%A_%a.log
 #SBATCH --array=1-60
 
@@ -18,7 +18,7 @@ fi
 # fail whenever something is fishy, use -x to get verbose logfiles
 set -e -u -x
 
-BUNDLE_LIST="${HOME}/clinical_dmri_benchmark/data/bundle_names_2.txt"
+BUNDLE_LIST="${HOME}/clinical_dmri_benchmark/data/bundle_names.txt"
 # Get the subject id from the call
 bundle=$(head -n "${SLURM_ARRAY_TASK_ID}" "${BUNDLE_LIST}" | tail -n 1)
 bundle="${bundle//[_-]/}"
