@@ -84,7 +84,7 @@ do
             gzip "${ROOT_BUNDLES_MNI}/${file_name_prefix}-MNI152NLin2009cAsym_bundle-${BUNDLE}_mask.nii"
 
             else
-                echo "File ${PATH_NATIVE_BUNDLE} does not exist, skipping."
+                echo "File ${bundle_path} does not exist, skipping."
                 continue
             fi
     done
