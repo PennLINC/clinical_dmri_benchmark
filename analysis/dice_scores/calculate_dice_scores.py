@@ -1,4 +1,5 @@
 import os
+import re
 import numpy as np
 import pandas as pd
 import argparse
@@ -35,32 +36,42 @@ def get_subject_ids(qsirecon_outputs: str, excluded_subjects: str = None) -> lis
         if subject in subjects:
             subjects.remove(subject)
     subjects.sort()
-    return subjects
+
+    # Now get only the subject root (no sub-)
+    subject_ids_extracted = [re.search(r'sub-(?:NDARINV)?(.*)', sbj).group(1) for sbj in subjects]
+
+    return subject_ids_extracted
 
 
-def load_masks_as_numpy(qsirecon_root, subject_ids, bundle):
+def load_masks_as_numpy(qsirecon_root, subject_roots, bundle):
     """
     Loads all masks into memory as NumPy arrays and stores them in a dictionary.
 
     Args:
       qsirecon_root: Root directory where subject folders are stored.
-      subject_ids: List of subject IDs.
+      subject_roots: List of subject IDs.
       bundle: The specific bundle name for which masks are loaded.
 
     Returns:
       A dictionary with keys as (subject_id, run) tuples and values as NumPy arrays of masks.
     """
     masks = {}
-    for subject_id in subject_ids:
-        for run in ["run-01", "run-02"]:
+    for subject_root in subject_roots:
+        for session in ["ses-baselineYear1Arm1", "ses-2YearFollowUpYArm1", "ses-04A", "ses-06A"]:
+            # if session is baseline or year 2, subject_id = sub-NDARINV{subject_id}, else it's just sub-{subject_id}
+            if session in ["ses-baselineYear1Arm1", "ses-2YearFollowUpYArm1"]:
+                subject_id = f"sub-NDARINV{subject_root}"
+            else:
+                subject_id = f"sub-{subject_root}"
+            
             mask_path = glob.glob(
-                f"{qsirecon_root}/{subject_id}/ses-PNC1/dwi/MNI/{subject_id}_ses-PNC1*_{run}_space-MNI152NLin2009cAsym_bundle-{bundle}_mask.nii.gz"
-            )
+                f"{qsirecon_root}/{subject_id}/{session}/dwi/MNI/{subject_id}_{session}*space-MNI152NLin2009cAsym*bundle-{bundle}_mask.nii.gz"
+            )[0]
             if mask_path:
-                mask_image = sitk.ReadImage(mask_path[0])
+                mask_image = sitk.ReadImage(mask_path)
                 mask_array = sitk.GetArrayFromImage(mask_image)
                 sparse_mask = csr_matrix(mask_array.flatten())
-                masks[(subject_id, run)] = sparse_mask
+                masks[(subject_root, session)] = sparse_mask
     return masks
 
 
@@ -92,37 +103,49 @@ def calculate_dice_scores(subject_ids, masks):
       A DataFrame containing Dice scores for each pair of masks.
     """
     sbj_ids_duplicated = []
-    runs = []
+    sessions = []
     for id in subject_ids:
-        sbj_ids_duplicated.append(id)
-        runs.append("run-01")
-        sbj_ids_duplicated.append(id)
-        runs.append("run-02")
+        # Add sessions available in "masks" dictionary if they are present
+        for session in ["ses-baselineYear1Arm1", "ses-2YearFollowUpYArm1", "ses-04A", "ses-06A"]:
+            if (id, session) in masks:
+                sbj_ids_duplicated.append(id)
+                sessions.append(session)
+                sbj_ids_duplicated.append(id)
+                sessions.append(session)
 
-    dice_array = np.zeros([len(subject_ids * 2), len(subject_ids * 2)]) - 1
+    # Initialize dice_array with dimensions based on the number of subject-session combinations
+    dice_array = np.zeros([len(sbj_ids_duplicated), len(sbj_ids_duplicated)]) - 1
     indexes_header = []
-    for i, sbj_run_1 in enumerate(zip(sbj_ids_duplicated, runs)):
-        sbj_id_1 = sbj_run_1[0]
-        run_1 = sbj_run_1[1]
-        indexes_header.append(sbj_id_1 + "_" + run_1)
-        if (sbj_run_1 in masks) == False:
+
+    # Loop through each subject-session combination
+    for i, sbj_session_1 in enumerate(zip(sbj_ids_duplicated, sessions)):
+        sbj_id_1 = sbj_session_1[0]
+        session_1 = sbj_session_1[1]
+        indexes_header.append(f"{sbj_id_1}_{session_1}")
+        
+        # Check if the subject-session pair exists in masks
+        if sbj_session_1 not in masks:
             dice_array[i, :] = np.nan
             continue
-        mask1 = masks[sbj_run_1]
-        for j, sbj_run_2 in enumerate(zip(sbj_ids_duplicated, runs)):
+        
+        mask1 = masks[sbj_session_1]
+        for j, sbj_session_2 in enumerate(zip(sbj_ids_duplicated, sessions)):
             if dice_array[i, j] != -1 and dice_array[j, i] != -1:
                 continue
-            if (sbj_run_2 in masks) == False:
+            
+            if sbj_session_2 not in masks:
                 dice_array[i, j] = np.nan
                 dice_array[j, i] = np.nan
             else:
-                mask2 = masks[sbj_run_2]
+                mask2 = masks[sbj_session_2]
                 dice_coefficient = dice_coefficient_numpy(mask1, mask2)
                 dice_array[i, j] = dice_coefficient
                 dice_array[j, i] = dice_coefficient
-    dice_df = pd.DataFrame(index=indexes_header, columns=indexes_header)
-    for i in range(dice_array.shape[0]):
-        dice_df.loc[indexes_header[i]] = dice_array[i, :]
+
+    # Create a DataFrame for the dice coefficient matrix
+    dice_df = pd.DataFrame(dice_array, index=indexes_header, columns=indexes_header)
+    #for i in range(dice_array.shape[0]):
+    #    dice_df.loc[indexes_header[i]] = dice_array[i, :]
     return dice_df
 
 
@@ -145,14 +168,14 @@ if __name__ == "__main__":
     QSIRECON_SUFFIX = args.recon_suffix
     BUNDLE_NAME = args.bundle
     ROOT_QSIRECON = (
-        "/cbica/projects/clinical_dmri_benchmark/results/qsirecon_outputs/qsirecon-"
-        + QSIRECON_SUFFIX
+        f"/cbica/projects/abcd_qsiprep/bundle_comparison/test_data/qsirecon-{QSIRECON_SUFFIX}"
     )
-    EXCLUDED_SBJ_LIST = "/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists/excluded_subjects.txt"
+    EXCLUDED_SBJ_LIST = "/cbica/projects/abcd_qsiprep/bundle_comparison/clinical_dmri_benchmark/analysis/data_processing/subject_lists/excluded_subjects.txt"
     OUTPUT_ROOT = (
-        "/cbica/projects/clinical_dmri_benchmark/results/dices/"
+        "/cbica/projects/abcd_qsiprep/bundle_comparison/results/dices/"
         + QSIRECON_SUFFIX
     )
+    os.makedirs(OUTPUT_ROOT, exist_ok=True)
 
     # Get ids of reconstructed subjects
     sbj_ids = get_subject_ids(ROOT_QSIRECON, EXCLUDED_SBJ_LIST)

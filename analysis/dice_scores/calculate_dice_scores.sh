@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=5G
 #SBATCH --time=05:00:00
-#SBATCH --output=../logs/pnc-%A_%a.log
+#SBATCH --output=/cbica/projects/abcd_qsiprep/bundle_comparison/logs/MNIWarp-%A_%a.log
 #SBATCH --array=1-60
 
 [ -z "${JOB_ID}" ] && JOB_ID=TEST
@@ -18,20 +18,22 @@ fi
 # fail whenever something is fishy, use -x to get verbose logfiles
 set -e -u -x
 
-BUNDLE_LIST="${HOME}/clinical_dmri_benchmark/data/bundle_names.txt"
+BUNDLE_LIST="${HOME}/bundle_comparison/clinical_dmri_benchmark/data/bundle_names.txt"
 # Get the subject id from the call
-bundle=$(head -n "${SLURM_ARRAY_TASK_ID}" "${BUNDLE_LIST}" | tail -n 1)
+#bundle=$(head -n "${SLURM_ARRAY_TASK_ID}" "${BUNDLE_LIST}" | tail -n 1)
+bundle="Association_ArcuateFasciculusL"
 bundle="${bundle//[_-]/}"
 
-RECON_SUFFIX=$1
-PYTHON_HELPER_SCRIPT="${HOME}/clinical_dmri_benchmark/analysis/dice_scores/calculate_dice_scores.py"
+PYTHON_HELPER_SCRIPT="${HOME}/bundle_comparison/clinical_dmri_benchmark/analysis/dice_scores/calculate_dice_scores.py"
 
-source /cbica/projects/clinical_dmri_benchmark/micromamba/etc/profile.d/micromamba.sh
+source ${HOME}/miniconda3/etc/profile.d/conda.sh
 
-micromamba activate clinical_dmri_benchmark
+conda activate bundlestats
 
-python3 ${PYTHON_HELPER_SCRIPT} --recon_suffix ${RECON_SUFFIX} --bundle ${bundle}
+for RECON_SUFFIX in "GQIAutoTrack"  "MSMTAutoTrack"  "SS3TAutoTrack"; do
+    python3 ${PYTHON_HELPER_SCRIPT} --recon_suffix ${RECON_SUFFIX} --bundle ${bundle}
+done
 
-micromamba deactivate
+conda deactivate
 
 echo SUCCESS
