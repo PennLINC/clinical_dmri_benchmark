@@ -90,62 +90,64 @@ def dice_coefficient_numpy(mask1, mask2):
     sum_masks = mask1.count_nonzero() + mask2.count_nonzero()
     return 2.0 * intersection / sum_masks if sum_masks > 0 else np.nan
 
-
 def calculate_dice_scores(subject_ids, masks):
     """
     Calculate Dice scores for each pair of masks.
 
     Args:
       subject_ids: List of subject IDs.
-      masks: Dictionary containing preloaded masks with (subject_id, run) as keys.
+      masks: Dictionary containing preloaded masks with (subject_id, session) as keys.
 
     Returns:
       A DataFrame containing Dice scores for each pair of masks.
     """
-    sbj_ids_duplicated = []
-    sessions = []
-    for id in subject_ids:
-        # Add sessions available in "masks" dictionary if they are present
-        for session in ["ses-baselineYear1Arm1", "ses-2YearFollowUpYArm1", "ses-04A", "ses-06A"]:
-            if (id, session) in masks:
-                sbj_ids_duplicated.append(id)
-                sessions.append(session)
-                sbj_ids_duplicated.append(id)
-                sessions.append(session)
+    # Define the desired chronological order of sessions
+    session_order = [
+        "ses-baselineYear1Arm1",
+        "ses-2YearFollowUpYArm1",
+        "ses-04A",
+        "ses-06A",
+    ]
+    
+    # Collect all valid subject-session combinations
+    sbj_sessions = [
+        (subject_id, session)
+        for subject_id in subject_ids
+        for session in session_order
+        if (subject_id, session) in masks
+    ]
 
-    # Initialize dice_array with dimensions based on the number of subject-session combinations
-    dice_array = np.zeros([len(sbj_ids_duplicated), len(sbj_ids_duplicated)]) - 1
-    indexes_header = []
+    # Remove duplicates (if any exist)
+    sbj_sessions = list(dict.fromkeys(sbj_sessions))  # Maintains order in Python 3.7+
+    
+    # Sort the list first by subject ID, then by session order
+    sbj_sessions.sort(
+        key=lambda x: (x[0], session_order.index(x[1]))
+    )
 
-    # Loop through each subject-session combination
-    for i, sbj_session_1 in enumerate(zip(sbj_ids_duplicated, sessions)):
-        sbj_id_1 = sbj_session_1[0]
-        session_1 = sbj_session_1[1]
-        indexes_header.append(f"{sbj_id_1}_{session_1}")
-        
-        # Check if the subject-session pair exists in masks
-        if sbj_session_1 not in masks:
-            dice_array[i, :] = np.nan
-            continue
-        
-        mask1 = masks[sbj_session_1]
-        for j, sbj_session_2 in enumerate(zip(sbj_ids_duplicated, sessions)):
-            if dice_array[i, j] != -1 and dice_array[j, i] != -1:
+    # Initialize the Dice coefficient matrix
+    n = len(sbj_sessions)
+    dice_array = np.zeros((n, n)) - 1
+    indexes_header = [f"{sbj}_{sess}" for sbj, sess in sbj_sessions]
+
+    # Compute Dice coefficients
+    for i, sbj_session_1 in enumerate(sbj_sessions):
+        mask1 = masks.get(sbj_session_1)
+        for j, sbj_session_2 in enumerate(sbj_sessions):
+            if dice_array[i, j] != -1:
                 continue
-            
-            if sbj_session_2 not in masks:
+
+            mask2 = masks.get(sbj_session_2)
+            if mask1 is None or mask2 is None:
                 dice_array[i, j] = np.nan
                 dice_array[j, i] = np.nan
             else:
-                mask2 = masks[sbj_session_2]
-                dice_coefficient = dice_coefficient_numpy(mask1, mask2)
-                dice_array[i, j] = dice_coefficient
-                dice_array[j, i] = dice_coefficient
+                dice_score = dice_coefficient_numpy(mask1, mask2)
+                dice_array[i, j] = dice_score
+                dice_array[j, i] = dice_score
 
-    # Create a DataFrame for the dice coefficient matrix
+    # Create a DataFrame for the Dice matrix
     dice_df = pd.DataFrame(dice_array, index=indexes_header, columns=indexes_header)
-    #for i in range(dice_array.shape[0]):
-    #    dice_df.loc[indexes_header[i]] = dice_array[i, :]
     return dice_df
 
 
