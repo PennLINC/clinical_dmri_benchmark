@@ -1,0 +1,93 @@
+# Run on juseless
+# The environment
+universe       = vanilla
+getenv         = True
+request_cpus   = 1
+request_memory = 4G
+
+# Execution
+initial_dir    = $ENV(HOME)
+executable     = /data/project/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/prediction/predict_cognition.sh
+
+# Job
+log            = $ENV(HOME)/logs/prediction_remove_confounds_$(Cluster).$(Process).log
+output         = $ENV(HOME)/logs/prediction_remove_confounds_$(Cluster).$(Process).out
+error          = $ENV(HOME)/logs/prediction_remove_confounds_$(Cluster).$(Process).err
+
+# arguments = "run reconstruction target feature(s) confound(s)"
+
+# all features
+arguments = "run-01 CSD cpxresAZv2 md,dti_fa,total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 CSD cpxresAZv2 md,dti_fa,total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-01 GQI cpxresAZv2 md,dti_fa,total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 GQI cpxresAZv2 md,dti_fa,total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-01 SS3T cpxresAZv2 md,dti_fa,total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 SS3T cpxresAZv2 md,dti_fa,total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+# volume only
+arguments = "run-01 CSD cpxresAZv2 total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 CSD cpxresAZv2 total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-01 GQI cpxresAZv2 total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 GQI cpxresAZv2 total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-01 SS3T cpxresAZv2 total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 SS3T cpxresAZv2 total_volume sex,ageAtScan1,mean_fd"
+Queue
+
+# FA only
+arguments = "run-01 CSD cpxresAZv2 dti_fa sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 CSD cpxresAZv2 dti_fa sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-01 GQI cpxresAZv2 dti_fa sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 GQI cpxresAZv2 dti_fa sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-01 SS3T cpxresAZv2 dti_fa sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 SS3T cpxresAZv2 dti_fa sex,ageAtScan1,mean_fd"
+Queue
+
+# MD only
+arguments = "run-01 CSD cpxresAZv2 md sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 CSD cpxresAZv2 md sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-01 GQI cpxresAZv2 md sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 GQI cpxresAZv2 md sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-01 SS3T cpxresAZv2 md sex,ageAtScan1,mean_fd"
+Queue
+
+arguments = "run-02 SS3T cpxresAZv2 md sex,ageAtScan1,mean_fd"
+Queue
