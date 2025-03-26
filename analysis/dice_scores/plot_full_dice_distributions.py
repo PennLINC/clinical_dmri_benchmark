@@ -20,7 +20,6 @@ def read_bundle_txt(path_to_bundle_list: str) -> list:
     Args:
     path_to_bundle_list: Path to the txt file containing names from reconstructed bundles
                          Each bundle name is expected to be in a new line
-
     Returns:
     List of bundle names
     """
@@ -90,7 +89,7 @@ plt.ylim(0, 1)
 # saving as svg is not possible due to large file size
 # Save png in repro and larger PDF externally
 plt.savefig(f"/Users/amelie/Datasets/clinical_dmri_benchmark/dice_scores/dice_scores_{RECONSTRUCTION}.pdf",
-            bbox_inches="tight", dpi=600)
+            bbox_inches="tight")
 plt.savefig(
-    f"../../figures/dice_scores_{RECONSTRUCTION}.png", bbox_inches="tight", dpi=600)
+    f"../../figures/dice_scores_{RECONSTRUCTION}.png", bbox_inches="tight", dpi=300)
 plt.show()
