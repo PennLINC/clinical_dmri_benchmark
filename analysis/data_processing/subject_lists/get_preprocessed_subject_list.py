@@ -2,7 +2,6 @@
 import os
 import logging
 logging.basicConfig(level=logging.INFO)
-import json
 from get_subject_list import get_completed_subjects, get_available_subjects
 import argparse
 

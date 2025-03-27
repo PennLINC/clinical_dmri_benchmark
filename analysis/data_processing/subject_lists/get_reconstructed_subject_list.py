@@ -3,7 +3,6 @@ import os
 import logging
 
 logging.basicConfig(level=logging.INFO)
-import json
 import argparse
 
 

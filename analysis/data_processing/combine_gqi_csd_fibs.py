@@ -1,6 +1,4 @@
 from scipy.io import loadmat, savemat
-import os
-import numpy as np
 import argparse
 
 

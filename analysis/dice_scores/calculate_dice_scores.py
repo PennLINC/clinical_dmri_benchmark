@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import argparse
 import glob
-from itertools import combinations
 import SimpleITK as sitk
 from scipy.sparse import csr_matrix
 

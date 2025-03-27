@@ -2,7 +2,6 @@
 import os
 import logging
 logging.basicConfig(level=logging.INFO)
-import json
 
 RAW_DATA = '/cbica/comp_space/clinical_dmri_benchmark/data/PNC/BIDS'
 OUTPUTS_QSIPREP = '/cbica/projects/clinical_dmri_benchmark/results/qsiprep_outputs'
