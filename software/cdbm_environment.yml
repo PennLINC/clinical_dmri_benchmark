@@ -1,0 +1,19 @@
+name: clinical_dmri_benchmark
+channels:
+- conda-forge
+dependencies:
+  - dipy=1.9.0
+  - hyppo
+  - ipykernel=6.29.5
+  - julearn
+  - matplotlib=3.9.2
+  - nibabel=5.2.1
+  - nipype=1.9.1
+  - numpy=1.26.4
+  - pandas=2.2.2
+  - python=3.12.5
+  - scikit-learn=1.5.2
+  - scipy=1.14.1
+  - seaborn=0.13.2
+  - shap
+  - simpleitk=2.4.0

@@ -1,0 +1,9 @@
+name: mayavi
+channels:
+- conda-forge
+dependencies:
+  - dipy
+  - jupyter
+  - mayavi
+  - python=3.11
+  - trimesh
