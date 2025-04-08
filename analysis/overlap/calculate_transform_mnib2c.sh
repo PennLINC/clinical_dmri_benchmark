@@ -18,7 +18,7 @@ fi
 # fail whenever something is fishy, use -x to get verbose logfiles
 set -e -u -x
 
-PYTHON_HELPER_SCRIPT="${HOME}/clinical_dmri_benchmark/analysis/overlap/warp_mni_b2c.py"
+PYTHON_HELPER_SCRIPT="${HOME}/clinical_dmri_benchmark/analysis/overlap/calculate_transform_mnib2c.py"
 export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$SLURM_CPUS_PER_TASK
 
 source /cbica/projects/clinical_dmri_benchmark/micromamba/etc/profile.d/micromamba.sh
