@@ -21,7 +21,9 @@ Acquiring high-quality multi-shell neuroimaging diffusion MRI (dMRI) datasets is
 
 **Analytic Replicator:** Steven L. Meisler
 
-
+**Collaborators:**
+<br>
+Aaron Alexander-Bloch, Joëlle Bagautdinova, Erica B. Baller, Ruben C. Gur, Raquel E. Gur, Audrey C. Luo, Tyler M. Moore, Oleksandr V. Popovych, Kathrin Reetz, David Roalf, Valerie J. Sydnor, Simon B. Eickhoff
 
 ## Project Timeline
 **Project Start Date:** 06/2024
