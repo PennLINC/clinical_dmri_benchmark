@@ -152,6 +152,7 @@ if __name__ == "__main__":
         "/cbica/projects/clinical_dmri_benchmark/results/dices/"
         + QSIRECON_SUFFIX
     )
+    os.makedirs(OUTPUT_ROOT, exist_ok=True)
 
     # Get ids of reconstructed subjects
     sbj_ids = get_subject_ids(ROOT_QSIRECON, EXCLUDED_SBJ_LIST)

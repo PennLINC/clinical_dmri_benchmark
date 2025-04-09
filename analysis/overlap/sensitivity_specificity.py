@@ -4,6 +4,10 @@ import pandas as pd
 import numpy as np
 import sys
 
+# Set output directory
+output_root = "/cbica/projects/clinical_dmri_benchmark/results/overlap/"
+os.makedirs(output_root, exist_ok=True)
+
 #Identify dataset from system argument
 reconstruction = sys.argv[1]
 
@@ -67,5 +71,5 @@ for tract_name in tract_names:
                 })
 
 overlap_results_df = pd.DataFrame(overlap_results)
-overlap_results_df.to_csv("/cbica/projects/clinical_dmri_benchmark/results/overlap/" + reconstruction + "_overlap.csv", index=False)
+overlap_results_df.to_csv(output_root + reconstruction + "_overlap.csv", index=False)
 

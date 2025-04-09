@@ -134,8 +134,10 @@ if __name__ == "__main__":
     WORKERS = args.workers
     DICE_ROOT = "/cbica/projects/clinical_dmri_benchmark/results/dices/"
     BUNDLE_NAMES = "/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/data/bundle_names.txt"
+    OUTPUT_ROOT = "/cbica/projects/clinical_dmri_benchmark/results/discriminability"
+    os.makedirs(OUTPUT_ROOT, exist_ok=True)
     OUTPUT_PATH = (
-        "/cbica/projects/clinical_dmri_benchmark/results/discriminability/two_sample_"
+        OUTPUT_ROOT + "/two_sample_"
         + QSIRECON_SUFFIX_1 + "_" + QSIRECON_SUFFIX_2
         + ".csv"
     )
