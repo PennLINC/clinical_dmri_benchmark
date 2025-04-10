@@ -215,6 +215,8 @@ This script requires it’s own python environment!
 - Start interactive python session in terminal with `ipython --gui=qt5`
 - Run code from `~/analysis/overlay_maps/plot_population_map_on_atlas.py` in interactive python session to create the plots.
 
+The required surfaces for the figure can be downloaded [here](https://osf.io/4mw3a/).
+
 ### 10.3: Extract atlas bundles from DSIStudio
 - Download high-resolution HCP1065 1mm fib file from https://brain.labsolver.org/hcp_template.html and open it in DSIStudio. In the project directory this file can be found here: `~/data/HCP1065.1mm.fib.gz`
 - Right-click DSIStudio installation and select `Show Package Contents` .
