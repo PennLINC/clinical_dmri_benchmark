@@ -44,6 +44,7 @@ I.e., citations to poster presentations, links to preprints, final publication c
 
 # II. CUBIC Project Directory Structure
 The project directory on CUBIC is `/cbica/projects/clinical_dmri_benchmark`. The following directories are relative to this home directory if not specified otherwise.
+
 | **Directory**                                        | **Description**                                                                                                                              |
 |------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | `~/clinical_dmri_benchmark`                          | Github repro: Code for data processing, analysis and figures                                                                                 |
