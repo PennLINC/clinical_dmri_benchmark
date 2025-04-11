@@ -1,6 +1,7 @@
 ---
 layout: default
-# title: Reproducibility Guide
+title: ""
+description: ""
 parent: Documentation
 has_children: false
 has_toc: false
