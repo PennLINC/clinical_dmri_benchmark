@@ -245,6 +245,7 @@ Example for GQI: `sbatch sensitivity_specificity.sh GQIautotrack`
 Run `~/analysis/overlap/plot_sensitivity_specificity.ipynb` to create the plots of sensitivity and specificity.
 
 # Prediction Analysis
+CSVs for confounds and targets can be found at `/cbica/projects/clinical_dmri_benchmark/data/prediction` on CUBIC.
 
 ## 11: Prepare Data
 
