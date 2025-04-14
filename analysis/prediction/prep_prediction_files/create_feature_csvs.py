@@ -2,17 +2,17 @@ import pandas as pd
 import os
 import re
 
+STATS_FILE_ROOT = "/cbica/projects/clinical_dmri_benchmark/results/bundle_stats"
+
 subject_pattern = r"(sub-\d+)"
 run_pattern = r"(run-\d+)"
 
-excluded_subjects_file = "/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists/excluded_subjects.txt"
+excluded_subjects_file = "../../data_processing/subject_lists/excluded_subjects.txt"
 with open(excluded_subjects_file, 'r') as f:
     excluded_subjects = [line.strip() for line in f.readlines()]
 
-
-stats_files_root = "/cbica/projects/clinical_dmri_benchmark/results/bundle_stats"
 for reconstruction in ["GQIautotrack", "CSDautotrack", "SS3Tautotrack"]:
-    stats_files = os.listdir(os.path.join(stats_files_root, reconstruction))
+    stats_files = os.listdir(os.path.join(STATS_FILE_ROOT, reconstruction))
     stats_files.sort()
     if ".DS_Store" in stats_files:
         stats_files.remove(".DS_Store")
@@ -26,7 +26,7 @@ for reconstruction in ["GQIautotrack", "CSDautotrack", "SS3Tautotrack"]:
             run_id = re.search(run_pattern, stats_file).group(1)
             if run_id != run:
                 continue
-            df = pd.read_csv(os.path.join(stats_files_root, reconstruction, stats_file))
+            df = pd.read_csv(os.path.join(STATS_FILE_ROOT, reconstruction, stats_file))
             if reconstruction == "GQIautotrack":
                 df = df.drop(columns=["session_id", "task_id", "dir_id", "acq_id", "space_id", "rec_id", "run_id", "source_file"])
 
@@ -52,4 +52,4 @@ for reconstruction in ["GQIautotrack", "CSDautotrack", "SS3Tautotrack"]:
             # Append the pivoted DataFrame to the list
             all_subjects_data.append(df_pivoted)
         df_final = pd.concat(all_subjects_data, ignore_index=True)
-        df_final.to_csv(os.path.join(stats_files_root, reconstruction + "_" + run + ".csv"), index=False)
+        df_final.to_csv(os.path.join(STATS_FILE_ROOT, reconstruction + "_" + run + ".csv"), index=False)
