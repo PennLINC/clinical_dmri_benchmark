@@ -231,13 +231,14 @@ The required surfaces for the figure can be downloaded [here](https://osf.io/4mw
 - Get T1w images from MNIb and MNIc space from template flow using datalad. These should be saved here:
     - `~/data/templateflow/tpl-MNI152NLin2009bAsym/tpl-MNI152NLin2009bAsym_res-1_T1w.nii.gz`
     - `~/data/templateflow/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz`
-- Calculate transform using the two T1w images by running `~/analysis/overlap/calculate_transform_mnib2c.sh`
+- Calculate transform using the two T1w images by running `~/analysis/overlap/calculate_transform_mnib2c.sh`. This code is largely based on code by Steven Meisler.
 - Mask and transform all atlas bundles by running `~/analysis/overlap/mask_and_warp_atlas_bundles.sh`
 
 ### 10.5: Calculate sensitivity and specificity of reconstructed bundles with atlas bundles
 Repeat this step for all three reconstruction methods `GQIautotrack` , `CSDautotrack` and `SS3Tautotrack` .
 <br>
-Run `~/analysis/overlap/sensitivity_specificity.sh` to calculate sensitivity and specificity of each WM bundle for a given reconstruction method.
+Run `~/analysis/overlap/sensitivity_specificity.sh` to calculate sensitivity and specificity of each WM bundle for a given reconstruction method. This code is largely based on code by Valerie Sydnor.
+<br>
 Example for GQI: `sbatch sensitivity_specificity.sh GQIautotrack`
 
 ### 10.6: Plot sensitivity and specificity 🎨
@@ -256,7 +257,7 @@ Example for GQI: `bash move_bundle_stats.sh GQIautotrack`
 <br>
 **11.1.3:** Plot feature ICCs by running `~/analysis/prediction/plot_feature_icc.ipynb` 🎨
 <br>
-This has to be run for the three different features considered here, i.e., `total_volume_mm3` , `dti_fa` , `md` . The current feature for which the plot is created can be adjusted at the beginning of the manuscript.
+This has to be run for the three different features considered here, i.e., `total_volume_mm3` , `dti_fa` , `md` . The current feature for which the plot is created can be adjusted at the beginning of the script.
 
 ### 11.2: Prepare confound csv
 Run `~/analysis/prediction/prep_prediction_files/prepare_confounds_csv.py` to extract the head movement for all scans and create one confound csv containing all confounds of interest for all subjects.
