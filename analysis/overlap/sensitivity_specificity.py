@@ -4,15 +4,17 @@ import pandas as pd
 import numpy as np
 import sys
 
-# Set output directory
-output_root = "/cbica/projects/clinical_dmri_benchmark/results/overlap/"
-os.makedirs(output_root, exist_ok=True)
+BUNDLE_MASK_ROOT = "/cbica/projects/clinical_dmri_benchmark/results/qsirecon_outputs"
+ATLAS_MASK_ROOT = "/cbica/projects/clinical_dmri_benchmark/data/atlas_bundles"
+POPULATION_MAP_ROOT = "/cbica/projects/clinical_dmri_benchmark/results/overlay_maps"
+OUTPUT_ROOT = "/cbica/projects/clinical_dmri_benchmark/results/overlap/"
+os.makedirs(OUTPUT_ROOT, exist_ok=True)
 
 #Identify dataset from system argument
 reconstruction = sys.argv[1]
 
 #List of connections to compute overlap measures for 
-tract_names_file = "/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/data/bundle_names.txt" 
+tract_names_file = "../../data/bundle_names.txt" 
 with open(tract_names_file, 'r') as f:
     tract_names = [line.strip() for line in f.readlines()]
 #Function to compute sensitivity and specificity values for each subject-specific connection based on atlas connection overlap
@@ -31,7 +33,7 @@ def compute_sensitivity_specificity(sub_mask, template_mask, union):
 overlap_results = []
 
 # Identify all subject-specific tract masks in template space
-subject_masks_path = "/cbica/projects/clinical_dmri_benchmark/results/qsirecon_outputs/qsirecon-" + reconstruction
+subject_masks_path = f"{BUNDLE_MASK_ROOT}/qsirecon-{reconstruction}"
 subids = os.listdir(subject_masks_path)
 runs = ["run-01", "run-02"]
 
@@ -40,16 +42,15 @@ for tract_name in tract_names:
     tract_name_short = tract_name.replace("_", "").replace("-", "")
 
     # Read probabilistic maps for all three methods
-    root_prob_maps = "/cbica/projects/clinical_dmri_benchmark/results/overlay_maps"
-    prob_map_gqi = sitk.GetArrayFromImage(sitk.ReadImage(os.path.join(root_prob_maps, "GQIautotrack", tract_name_short + ".nii.gz")))
-    prob_map_csd = sitk.GetArrayFromImage(sitk.ReadImage(os.path.join(root_prob_maps, "CSDautotrack", tract_name_short + ".nii.gz")))
-    prob_map_ss3t = sitk.GetArrayFromImage(sitk.ReadImage(os.path.join(root_prob_maps, "SS3Tautotrack", tract_name_short + ".nii.gz")))
+    prob_map_gqi = sitk.GetArrayFromImage(sitk.ReadImage(os.path.join(POPULATION_MAP_ROOT, "GQIautotrack", tract_name_short + ".nii.gz")))
+    prob_map_csd = sitk.GetArrayFromImage(sitk.ReadImage(os.path.join(POPULATION_MAP_ROOT, "CSDautotrack", tract_name_short + ".nii.gz")))
+    prob_map_ss3t = sitk.GetArrayFromImage(sitk.ReadImage(os.path.join(POPULATION_MAP_ROOT, "SS3Tautotrack", tract_name_short + ".nii.gz")))
     prob_map_gqi[prob_map_gqi > 0] = 1
     prob_map_csd[prob_map_csd > 0] = 1
     prob_map_ss3t[prob_map_ss3t > 0] = 1
 
     # Read in template (atlas) tract mask
-    atlas_mask_path = "/cbica/projects/clinical_dmri_benchmark/data/atlas_bundles/" + tract_name + "_MNIc.nii.gz"
+    atlas_mask_path = f"{ATLAS_MASK_ROOT}/{tract_name}_MNIc.nii.gz"
     atlas_mask = sitk.GetArrayFromImage(sitk.ReadImage(atlas_mask_path, sitk.sitkUInt8))
 
     # calculate union between population maps and atlas tract to use as mask when calculating subject specific specificity 
@@ -71,5 +72,5 @@ for tract_name in tract_names:
                 })
 
 overlap_results_df = pd.DataFrame(overlap_results)
-overlap_results_df.to_csv(output_root + reconstruction + "_overlap.csv", index=False)
+overlap_results_df.to_csv(OUTPUT_ROOT + reconstruction + "_overlap.csv", index=False)
 

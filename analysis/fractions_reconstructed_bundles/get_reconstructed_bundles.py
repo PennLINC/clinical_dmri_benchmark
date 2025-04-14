@@ -79,13 +79,13 @@ if __name__ == "__main__":
         "/cbica/projects/clinical_dmri_benchmark/results/qsirecon_outputs",
         "qsirecon-" + QSIRECON_SUFFIX,
     )
-    BUNDLE_NAMES = "/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/data/bundle_names.txt"
-    EXCLUDED_SBJ_LIST = "/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists/excluded_subjects.txt"
     OUTPUT_PATH = (
         "/cbica/projects/clinical_dmri_benchmark/results/qsirecon_outputs/reconstructed_bundles_"
         + QSIRECON_SUFFIX
         + ".csv"
     )
+    BUNDLE_NAMES = "../../data/bundle_names.txt"
+    EXCLUDED_SBJ_LIST = "../data_processing/subject_lists/excluded_subjects.txt"
 
     with open(BUNDLE_NAMES, "r") as f:
         bundles = f.read().splitlines()

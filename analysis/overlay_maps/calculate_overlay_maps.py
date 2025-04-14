@@ -90,6 +90,6 @@ if __name__ == "__main__":
         + QSIRECON_SUFFIX
     )
     os.makedirs(OUTPUT_ROOT, exist_ok=True)
-    EXCLUDED_SBJ_LIST = "/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists/excluded_subjects.txt"
+    EXCLUDED_SBJ_LIST = "../data_processing/subject_lists/excluded_subjects.txt"
 
     get_statitistical_overlay_maps(BUNDLE_ROOT, OUTPUT_ROOT, EXCLUDED_SBJ_LIST, BUNDLE)

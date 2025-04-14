@@ -72,4 +72,4 @@ df_filtered["p-val-corrected"] = pvals_corrected
 print(df_filtered)
 
 # Safe the filtered dataframe with corrected p-values as csv
-df_filtered.to_csv("/Users/amelie/Datasets/clinical_dmri_benchmark/prediction_results/stats_cpxres.csv", index=False)
+df_filtered.to_csv(f"{RESULT_ROOT}/stats_cpxres.csv", index=False)
