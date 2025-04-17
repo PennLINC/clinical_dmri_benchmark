@@ -210,16 +210,7 @@ Repeat this step for all three reconstruction methods `GQIautotrack` , `CSDautot
 Run `~/analysis/overlay_maps/calculate_overlay_maps.sh` to calculate sensitivity and specificity of each WM bundle for a given reconstruction method.
 Example for GQI: `sbatch calculate_overlay_maps.sh GQIautotrack`
 
-### 10.2: Plot population maps over atlas bundles 🎨
-This script requires it’s own python environment!
-<br>
-- Activate environment in terminal: `micromamba activate myavi`
-- Start interactive python session in terminal with `ipython --gui=qt5`
-- Run code from `~/analysis/overlay_maps/plot_population_map_on_atlas.py` in interactive python session to create the plots.
-
-The required surfaces for the figure can be downloaded [here](https://osf.io/4mw3a/).
-
-### 10.3: Extract atlas bundles from DSIStudio
+### 10.2: Extract atlas bundles from DSIStudio
 - Download high-resolution HCP1065 1mm fib file from https://brain.labsolver.org/hcp_template.html and open it in DSIStudio. In the project directory this file can be found here: `~/data/HCP1065.1mm.fib.gz`
 - Right-click DSIStudio installation and select `Show Package Contents` .
 - Then open `/Applications/dsi_studio.app/Contents/MacOS/atlas/human/human.tt.gz` in DSIStudio on top of the HCP fib file.
@@ -227,12 +218,23 @@ The required surfaces for the figure can be downloaded [here](https://osf.io/4mw
 - Then select all bundles except for the Cerebellum and Cranial Nerves, right-click one of them and select `save all tracts as multiple files`
 - These files should then be moved to `~/data/atlas_bundles/.`
 
-### 10.4: Mask atlas bundles and warp to MNIc space
+### 10.3: Mask atlas bundles and warp to MNIc space
 - Get T1w images from MNIb and MNIc space from template flow using datalad. These should be saved here:
     - `~/data/templateflow/tpl-MNI152NLin2009bAsym/tpl-MNI152NLin2009bAsym_res-1_T1w.nii.gz`
     - `~/data/templateflow/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz`
 - Calculate transform using the two T1w images by running `~/analysis/overlap/calculate_transform_mnib2c.sh`. This code is largely based on code by Steven Meisler.
 - Mask and transform all atlas bundles by running `~/analysis/overlap/mask_and_warp_atlas_bundles.sh`
+
+### 10.4: Plot population maps over atlas bundles 🎨
+This code is largely based on code by Matthew Cieslak.
+
+This script requires it’s own python environment!
+<br>
+- Activate environment in terminal: `micromamba activate myavi`
+- Start interactive python session in terminal with `ipython --gui=qt5`
+- Run code from `~/analysis/overlay_maps/plot_population_map_on_atlas.py` in interactive python session to create the plots.
+
+The required surfaces for the figure can be downloaded [here](https://osf.io/4mw3a/).
 
 ### 10.5: Calculate sensitivity and specificity of reconstructed bundles with atlas bundles
 Repeat this step for all three reconstruction methods `GQIautotrack` , `CSDautotrack` and `SS3Tautotrack` .
