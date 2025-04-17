@@ -8,7 +8,8 @@ CONFOUNDS_ROOT = "/cbica/projects/clinical_dmri_benchmark/data/confounds"
 ID_CONVERSION_PATH = "/cbica/projects/clinical_dmri_benchmark/data/QC/bblid_scanid_sub.csv"
 subject_ids = [f for f in os.listdir(
     OUTPUT_ROOT) if os.path.isdir(os.path.join(OUTPUT_ROOT, f))]
-subject_ids.remove("failures")
+if "failures" in subject_ids:
+    subject_ids.remove("failures")
 
 
 def find_qc_csv(folder, subid, run):
