@@ -208,7 +208,7 @@ Run `~/analysis/discriminability/plot_discrim_two_sample.ipynb` to create the pl
 Repeat this step for all three reconstruction methods `GQIautotrack` , `CSDautotrack` and `SS3Tautotrack` .
 <br>
 Run `~/analysis/overlay_maps/calculate_overlay_maps.sh` to calculate sensitivity and specificity of each WM bundle for a given reconstruction method.
-Example for GQI: `sbatch sensitivity_specificity.sh GQIautotrack`
+Example for GQI: `sbatch calculate_overlay_maps.sh GQIautotrack`
 
 ### 10.2: Plot population maps over atlas bundles 🎨
 This script requires it’s own python environment!
