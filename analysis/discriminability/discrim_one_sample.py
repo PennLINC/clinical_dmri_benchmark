@@ -29,7 +29,8 @@ def get_discrim_one_sample(dice_root: str, bundle_names: list, output_path: str)
         Path to save the resulting CSV file containing the discriminability scores, p-values, 
         and null distribution for each bundle.
     """
-    df = pd.DataFrame(columns=["bundle", "discriminability", "p-value", "null_distr"])
+    df = pd.DataFrame(
+        columns=["bundle", "discriminability", "p-value", "null_distr"])
     for bundle in bundle_names:
         print(bundle)
         dice_path = os.path.join(dice_root, bundle + ".csv")
@@ -47,7 +48,8 @@ def get_discrim_one_sample(dice_root: str, bundle_names: list, output_path: str)
         distances = distances[:, rows_to_keep]
         # Remove these rows from the ID-list as well
         subject_ids = subject_ids[rows_to_keep]
-        one_sample_output = DiscrimOneSample(is_dist=True).test(distances, subject_ids)
+        one_sample_output = DiscrimOneSample(
+            is_dist=True).test(distances, subject_ids)
         df_row = {
             "bundle": bundle,
             "discriminability": one_sample_output.stat,
@@ -58,6 +60,7 @@ def get_discrim_one_sample(dice_root: str, bundle_names: list, output_path: str)
         df = pd.concat([df, pd.DataFrame([df_row])], ignore_index=True)
     df.to_csv(output_path, index=False)
     return
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Reconstruction method")
@@ -85,4 +88,3 @@ if __name__ == "__main__":
         bundles[i] = bundle.replace("_", "").replace("-", "")
 
     get_discrim_one_sample(DICE_ROOT, bundles, OUTPUT_PATH)
-

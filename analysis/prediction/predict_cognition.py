@@ -13,11 +13,13 @@ import sys
 configure_logging(level='INFO')
 # Read global variables that vary between predictions
 # Use these when running on the cluster
-RUN = sys.argv[1] # [run-01, run-02]
-RECONSTRUCTION = sys.argv[2] # [GQI, CSD, SS3T]
-TARGET = sys.argv[3] # [cpxresAZv2, ciqAZv2, exeAZv2]
-FEATURES = sys.argv[4].split(",") # [[md,dti_fa,total_volume], md, dti_fa, total_volume]
-CONFOUNDS = sys.argv[5].split(",") # [[sex,ageAtScan1,mean_fd], [sex,ageAtScan1,mean_fd,mprage_antsCT_vol_TBV]]
+RUN = sys.argv[1]  # [run-01, run-02]
+RECONSTRUCTION = sys.argv[2]  # [GQI, CSD, SS3T]
+TARGET = sys.argv[3]  # [cpxresAZv2, ciqAZv2, exeAZv2]
+# [[md,dti_fa,total_volume], md, dti_fa, total_volume]
+FEATURES = sys.argv[4].split(",")
+# [[sex,ageAtScan1,mean_fd], [sex,ageAtScan1,mean_fd,mprage_antsCT_vol_TBV]]
+CONFOUNDS = sys.argv[5].split(",")
 
 # Use these when running / debugging one specific setup locally
 # RUN = "run-02"
@@ -46,7 +48,7 @@ NORMALIZATION = "zscore"
 N_QUANTILES = 5
 N_REPEATS = 100
 RANDOM_STATE = 22
-EXCLUDED_BUNDLES = ["ProjectionBrainstem_DentatorubrothalamicTract-lr", 
+EXCLUDED_BUNDLES = ["ProjectionBrainstem_DentatorubrothalamicTract-lr",
                     "ProjectionBrainstem_DentatorubrothalamicTract-rl",
                     "ProjectionBrainstem_CorticobulbarTractL",
                     "ProjectionBrainstem_CorticobulbarTractR",
@@ -59,14 +61,18 @@ np.random.seed(RANDOM_STATE)
 valid_subjects = get_valid_subjects(EXCLUDED_BUNDLES)
 
 # Prep feature, target and confound csv
-df_features = pd.read_csv(os.path.join(FEATURE_CSV_ROOT, RECONSTRUCTION + "autotrack_" + RUN +  ".csv"))
-df_features = filter_feature_df(df_features, EXCLUDED_BUNDLES, FEATURES, valid_subjects)
+df_features = pd.read_csv(os.path.join(
+    FEATURE_CSV_ROOT, RECONSTRUCTION + "autotrack_" + RUN + ".csv"))
+df_features = filter_feature_df(
+    df_features, EXCLUDED_BUNDLES, FEATURES, valid_subjects)
 
 df_conversion = pd.read_csv(CONVERSION_CSV)
 df_targets = pd.read_csv(TARGET_CSV)
-df_targets = filter_target_csv(df_targets, df_conversion, valid_subjects, TARGET)
+df_targets = filter_target_csv(
+    df_targets, df_conversion, valid_subjects, TARGET)
 
-df_confounds = filter_confounds_csv(pd.read_csv(CONFOUND_CSV), valid_subjects, CONFOUNDS)
+df_confounds = filter_confounds_csv(
+    pd.read_csv(CONFOUND_CSV), valid_subjects, CONFOUNDS)
 
 # create global prediction df with features, target and confounds
 df = pd.merge(df_features, df_targets, on="subject_id", how="inner")
@@ -97,8 +103,9 @@ scores, model, inspector = run_cross_validation(
     data=df,
     model=creator,
     return_train_score=True,
-    scoring = ["r_corr", "r2", "neg_mean_squared_error"],
-    cv=RepeatedContinuousStratifiedKFold(method="quantile", n_bins=N_QUANTILES, random_state=RANDOM_STATE, n_repeats=N_REPEATS),
+    scoring=["r_corr", "r2", "neg_mean_squared_error"],
+    cv=RepeatedContinuousStratifiedKFold(
+        method="quantile", n_bins=N_QUANTILES, random_state=RANDOM_STATE, n_repeats=N_REPEATS),
     return_estimator="all",
     return_inspector=True
 )
@@ -132,4 +139,5 @@ metadata = {
 scores.to_csv(os.path.join(SAVE_ROOT, save_folder, save_name + ".csv"))
 with open(os.path.join(SAVE_ROOT, save_folder, save_name + ".json"), "w") as f:
     json.dump(metadata, f, indent=4)
-cv_predictions.to_csv(os.path.join(SAVE_ROOT, save_folder, save_name + "_inspector.csv"))
+cv_predictions.to_csv(os.path.join(
+    SAVE_ROOT, save_folder, save_name + "_inspector.csv"))

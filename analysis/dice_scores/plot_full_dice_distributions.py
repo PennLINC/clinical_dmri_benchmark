@@ -45,7 +45,8 @@ sep = "_"
 intra_dice_list, inter_dice_list = [], []
 for bundle_name in bundle_names:
     bundle_name_short = bundle_name.split(sep=sep, maxsplit=1)[1]
-    bundle_file = f"{DICE_ROOT}/{RECONSTRUCTION}/" + bundle_name.replace("_", "").replace("-", "") + ".csv"
+    bundle_file = f"{DICE_ROOT}/{RECONSTRUCTION}/" + \
+        bundle_name.replace("_", "").replace("-", "") + ".csv"
 
     # Load CSV as numpy array for efficiency
     bundle_array = pd.read_csv(bundle_file, index_col=0, na_values=[""]).values
@@ -89,7 +90,8 @@ plt.gca().spines["left"].set_visible(True)
 plt.ylim(0, 1)
 # saving as svg is not possible due to large file size
 # Save png in repro and larger PDF externally
-plt.savefig(f"{DICE_ROOT}/dice_scores_{RECONSTRUCTION}.pdf", bbox_inches="tight")
+plt.savefig(f"{DICE_ROOT}/dice_scores_{RECONSTRUCTION}.pdf",
+            bbox_inches="tight")
 plt.savefig(
     f"../../figures/dice_scores_{RECONSTRUCTION}.png", bbox_inches="tight", dpi=300)
 plt.show()

@@ -9,6 +9,7 @@ from statsmodels.stats.multitest import multipletests
 RESULT_ROOT = "/Users/amelie/Datasets/clinical_dmri_benchmark/prediction_results/remove_confounds_features"
 TARGET = "cpxresAZv2"
 
+
 def load_result_csv(path_to_csv: str, run: str, target: str, reconstruction: str, features: str = None):
     df = pd.read_csv(path_to_csv)
     df["reconstruction"] = reconstruction
@@ -18,10 +19,13 @@ def load_result_csv(path_to_csv: str, run: str, target: str, reconstruction: str
     if features != None:
         df["features"] = features[1:-1]
         df["run_features"] = df["run"] + "_" + df["features"]
-        df["model"] = df["run"] + "_" + df["reconstruction"] + "_" + df["features"]
+        df["model"] = df["run"] + "_" + \
+            df["reconstruction"] + "_" + df["features"]
     else:
-        df["model"] = df["target"] + "_" + df["run"] + "_" + df["reconstruction"]
+        df["model"] = df["target"] + "_" + \
+            df["run"] + "_" + df["reconstruction"]
     return df
+
 
 # Read all result dataframes from the different prediction setups predicting the target
 dfs = []
@@ -30,19 +34,21 @@ for i, run in enumerate(["run-01", "run-02"]):
         for k, features in enumerate(["/md-fa-volume/", "/total_volume/", "/dti_fa/", "/md/"]):
             csv_path = f"{RESULT_ROOT}/{features}/{reconstruction}_{run}_{TARGET}.csv"
             if i+j+k == 0:
-                result_df = load_result_csv(csv_path, run, TARGET, reconstruction, features)
+                result_df = load_result_csv(
+                    csv_path, run, TARGET, reconstruction, features)
                 dfs.append(result_df)
             else:
-                df = load_result_csv(csv_path, run, TARGET, reconstruction, features)
+                df = load_result_csv(csv_path, run, TARGET,
+                                     reconstruction, features)
                 dfs.append(df)
                 result_df = pd.concat([result_df, df], ignore_index=True)
 
 # Run the corrected t-test for all considered models (2 runs * 3 reconstructions * 4 feature groups = 24)
 stats_df = corrected_ttest(dfs[0], dfs[1], dfs[2], dfs[3], dfs[4], dfs[5],
-                        dfs[6], dfs[7], dfs[8], dfs[9], dfs[10], dfs[11],
-                        dfs[12], dfs[13], dfs[14], dfs[15], dfs[16], dfs[17],
-                        dfs[18], dfs[19], dfs[20], dfs[21], dfs[22], dfs[23],
-                        method="fdr_bh")
+                           dfs[6], dfs[7], dfs[8], dfs[9], dfs[10], dfs[11],
+                           dfs[12], dfs[13], dfs[14], dfs[15], dfs[16], dfs[17],
+                           dfs[18], dfs[19], dfs[20], dfs[21], dfs[22], dfs[23],
+                           method="fdr_bh")
 
 # keep only the metric we are interested in
 stats_df = stats_df[stats_df["metric"] == "test_r_corr"]
@@ -67,7 +73,8 @@ df_filtered = pd.DataFrame(filtered_rows)
 df_filtered = df_filtered.reset_index(drop=True)
 
 # Perform a correction for multiple comparisons for the selected comparisons only
-rejected, pvals_corrected, _, _ = multipletests(df_filtered["p-val"], alpha=0.05, method='fdr_bh')
+rejected, pvals_corrected, _, _ = multipletests(
+    df_filtered["p-val"], alpha=0.05, method='fdr_bh')
 df_filtered["p-val-corrected"] = pvals_corrected
 print(df_filtered)
 

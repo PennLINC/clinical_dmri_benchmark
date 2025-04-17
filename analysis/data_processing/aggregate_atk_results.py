@@ -8,6 +8,7 @@ import nibabel as nb
 import numpy as np
 import glob
 
+
 def stat_txt_to_df(stat_txt_file: str, bundle_name: str):
     """ Converts the DSIStudio stats txt file to a line of a dataframe.
     If no bundle stats file could be found. Only the bundle name will be indicated
@@ -23,7 +24,8 @@ def stat_txt_to_df(stat_txt_file: str, bundle_name: str):
         return bundle_stats
     with open(stat_txt_file, "r") as statf:
         lines = [
-            line.strip().replace(" ", "_").replace("^", "").replace("(", "_").replace(")", "")
+            line.strip().replace(" ", "_").replace(
+                "^", "").replace("(", "_").replace(")", "")
             for line in statf
         ]
 
@@ -32,6 +34,7 @@ def stat_txt_to_df(stat_txt_file: str, bundle_name: str):
         bundle_stats[name] = float(value)
 
     return bundle_stats
+
 
 def convert_trk_to_tck(preprocessed_dwi: str, trk_file: str):
     """ This function converts the trk bundle files that are output from 
@@ -68,9 +71,10 @@ def convert_trk_to_tck(preprocessed_dwi: str, trk_file: str):
         tck_file = tck_file.strip('.trk') + '.tck'
     else:
         tck_file = trk_file.strip('.trk') + '.tck'
-    
+
     tck.save(tck_file)
     return
+
 
 def aggregate_atk_results(path_atk_outputs: str, bundles: list, subid: str, path_qsiprep_data: str):
     """
@@ -91,11 +95,14 @@ def aggregate_atk_results(path_atk_outputs: str, bundles: list, subid: str, path
         found_bundle_files = []
         found_bundle_names = []
         for bundle in bundles:
-            bundle_path = glob.glob(f"{path_atk_outputs}/{bundle}/{subid}_ses-PNC1*_{run}_space-T1w_dwimap.{bundle}.trk.gz")
+            bundle_path = glob.glob(
+                f"{path_atk_outputs}/{bundle}/{subid}_ses-PNC1*_{run}_space-T1w_dwimap.{bundle}.trk.gz")
             if bundle_path:
                 bundle_path = bundle_path[0]
-                bundle_file_name_prefix = os.path.basename(bundle_path).split('_space-T1w_')[0] + '_space-T1w'
-                stat_file_name = os.path.join(path_atk_outputs, bundle, bundle_file_name_prefix + "_dwimap." + bundle + ".stat.txt")
+                bundle_file_name_prefix = os.path.basename(
+                    bundle_path).split('_space-T1w_')[0] + '_space-T1w'
+                stat_file_name = os.path.join(
+                    path_atk_outputs, bundle, bundle_file_name_prefix + "_dwimap." + bundle + ".stat.txt")
                 if os.path.exists(stat_file_name) == True:
                     stats_rows.append(stat_txt_to_df(stat_file_name, bundle))
                 else:
@@ -107,13 +114,17 @@ def aggregate_atk_results(path_atk_outputs: str, bundles: list, subid: str, path
                 stats_rows.append(stat_txt_to_df("NA", bundle))
                 continue
         stats_df = pd.DataFrame(stats_rows)
-        stats_df.to_csv(os.path.join(path_atk_outputs, bundle_file_name_prefix + "_bundlestats.csv"), index=False)
+        stats_df.to_csv(os.path.join(
+            path_atk_outputs, bundle_file_name_prefix + "_bundlestats.csv"), index=False)
         for bundle_file, bundle_name in zip(found_bundle_files, found_bundle_names):
-            new_bundle_file = os.path.join(path_atk_outputs, bundle_file_name_prefix + "_bundle-" + bundle_name.replace("_", "").replace("-", "") + "_streamlines.trk.gz")
+            new_bundle_file = os.path.join(path_atk_outputs, bundle_file_name_prefix + "_bundle-" +
+                                           bundle_name.replace("_", "").replace("-", "") + "_streamlines.trk.gz")
             shutil.move(bundle_file, new_bundle_file)
-            preprocessed_dwi = os.path.join(path_qsiprep_data, bundle_file_name_prefix + "_desc-preproc_dwi.nii.gz")
+            preprocessed_dwi = os.path.join(
+                path_qsiprep_data, bundle_file_name_prefix + "_desc-preproc_dwi.nii.gz")
             convert_trk_to_tck(preprocessed_dwi, new_bundle_file)
-            new_bundle_file_tck = os.path.join(path_atk_outputs, bundle_file_name_prefix + "_bundle-" + bundle_name.replace("_", "").replace("-", "") + "_streamlines.tck")
+            new_bundle_file_tck = os.path.join(path_atk_outputs, bundle_file_name_prefix +
+                                               "_bundle-" + bundle_name.replace("_", "").replace("-", "") + "_streamlines.tck")
             os.system("gzip " + new_bundle_file_tck)
             os.remove(new_bundle_file)
     for bundle in bundles:
@@ -123,6 +134,7 @@ def aggregate_atk_results(path_atk_outputs: str, bundles: list, subid: str, path
 
     return
 
+
 if __name__ == '__main__':
     BUNDLE_NAMES = "/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/data/bundle_names.txt"
 
@@ -131,9 +143,13 @@ if __name__ == '__main__':
 
     # Set up argument parsing
     parser = argparse.ArgumentParser()
-    parser.add_argument("path_atk_outputs", type=str, help="Path with all atk outputs for one subjects")
-    parser.add_argument("subid", type=str, help="ID of the subject currently being processed")
-    parser.add_argument("path_qsiprep_data", type=str, help="Root of the preprocessed data for one subject")
+    parser.add_argument("path_atk_outputs", type=str,
+                        help="Path with all atk outputs for one subjects")
+    parser.add_argument("subid", type=str,
+                        help="ID of the subject currently being processed")
+    parser.add_argument("path_qsiprep_data", type=str,
+                        help="Root of the preprocessed data for one subject")
     args = parser.parse_args()
 
-    aggregate_atk_results(args.path_atk_outputs, bundles, args.subid, args.path_qsiprep_data)
+    aggregate_atk_results(args.path_atk_outputs, bundles,
+                          args.subid, args.path_qsiprep_data)

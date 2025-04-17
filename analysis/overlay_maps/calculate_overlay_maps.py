@@ -4,6 +4,7 @@ import argparse
 import glob
 import numpy as np
 
+
 def get_statitistical_overlay_maps(
     root_qsirecon: str, root_output: str,
     excluded_subject_list: str, bundle: str
@@ -53,7 +54,8 @@ def get_statitistical_overlay_maps(
     stats_overlap_img.SetDirection(bundle_image.GetDirection())
     stats_overlap_img.SetOrigin(bundle_image.GetOrigin())
     stats_overlap_img.SetSpacing(bundle_image.GetSpacing())
-    sitk.WriteImage(stats_overlap_img, os.path.join(root_output, bundle + ".nii.gz"))
+    sitk.WriteImage(stats_overlap_img, os.path.join(
+        root_output, bundle + ".nii.gz"))
     return
 
 
@@ -92,4 +94,5 @@ if __name__ == "__main__":
     os.makedirs(OUTPUT_ROOT, exist_ok=True)
     EXCLUDED_SBJ_LIST = "../data_processing/subject_lists/excluded_subjects.txt"
 
-    get_statitistical_overlay_maps(BUNDLE_ROOT, OUTPUT_ROOT, EXCLUDED_SBJ_LIST, BUNDLE)
+    get_statitistical_overlay_maps(
+        BUNDLE_ROOT, OUTPUT_ROOT, EXCLUDED_SBJ_LIST, BUNDLE)

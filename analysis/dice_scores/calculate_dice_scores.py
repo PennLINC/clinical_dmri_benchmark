@@ -6,6 +6,7 @@ import glob
 import SimpleITK as sitk
 from scipy.sparse import csr_matrix
 
+
 def get_subject_ids(qsirecon_outputs: str, excluded_subjects: str = None) -> list:
     """Created a python list of all subject folders in a specified qsirecon output directory.
     When provided, excludes subjects that are specified in a txt file of subjects to be excluded.

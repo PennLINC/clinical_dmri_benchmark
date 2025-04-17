@@ -141,7 +141,7 @@ POST_CAMERA_ROLL = 180
 LEFT_VIEWS = ["lh_lateral", "lh_medial", "sup", "post"]
 RIGHT_VIEWS = ["rh_lateral", "rh_medial", "sup", "post"]
 BOTH_VIEWS = ["lh_lateral", "lh_medial",
-            "rh_lateral", "rh_medial", "sup", "post"]
+              "rh_lateral", "rh_medial", "sup", "post"]
 
 
 def transform_to_voxel_space(
@@ -221,6 +221,7 @@ right_voxel_coords, right_faces = transform_to_voxel_space(
     smooth_iters=0,
     simplify_ratio=0.3,  # Reduce to 30% of original faces
 )
+
 
 def camera_callback(obj, evt):
     """Print camera position whenever it changes"""
@@ -487,7 +488,7 @@ os.remove("test.png")
 
 
 ALL_VIEWS = ["rh_lateral", "rh_medial",
-            "sup", "lh_lateral", "lh_medial", "post"]
+             "sup", "lh_lateral", "lh_medial", "post"]
 
 for reconstruction in ["GQI", "CSD", "SS3T"]:
     for bundle_name in bundles:

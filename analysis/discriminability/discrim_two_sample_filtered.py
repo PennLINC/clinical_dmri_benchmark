@@ -6,6 +6,8 @@ from hyppo.discrim import DiscrimTwoSample
 import argparse
 
 # Helper function to load reconstruction data
+
+
 def load_reconstruction_data(dice_root, recon_suffix, bundle):
     dice_path = os.path.join(dice_root, recon_suffix, bundle + ".csv")
     dices = pd.read_csv(dice_path, index_col=0, na_values=[""]).values
@@ -19,6 +21,8 @@ def load_reconstruction_data(dice_root, recon_suffix, bundle):
     return distances, subject_ids
 
 # Helper function to filter for common subject IDs
+
+
 def filter_common(subject_ids, distances, common_subids):
     indices = [i for i, sub in enumerate(subject_ids) if sub in common_subids]
     filtered_subject_ids = subject_ids[indices]
@@ -26,9 +30,12 @@ def filter_common(subject_ids, distances, common_subids):
     return filtered_subject_ids, filtered_distances
 
 # Helper function to filter isolates from the common subject IDs
+
+
 def filter_isolates(common_subids):
     # Simplify subject IDs to exclude run-specific information
-    simplified_subids = np.array([re.sub(r"\_run-\d+", "", sub) for sub in common_subids])
+    simplified_subids = np.array(
+        [re.sub(r"\_run-\d+", "", sub) for sub in common_subids])
 
     # Identify entries that appear more than once
     unique, counts = np.unique(simplified_subids, return_counts=True)
@@ -39,12 +46,16 @@ def filter_isolates(common_subids):
     return mask
 
 # Helper function to apply an isolate mask
+
+
 def apply_isolate_mask(subject_ids, distances, mask):
     subject_ids = subject_ids[mask]
     distances = distances[np.ix_(mask, mask)]
     return subject_ids, distances
 
 # Main function
+
+
 def get_discrim_two_sample(dice_root: str, recon_suffix_1: str, recon_suffix_2: str, recon_suffix_3: str, bundle_names: list, output_path: str, workers: int):
     """
     Parameters:
@@ -62,14 +73,18 @@ def get_discrim_two_sample(dice_root: str, recon_suffix_1: str, recon_suffix_2: 
     output_path : str
         Path to save the output CSV file.
     """
-    df = pd.DataFrame(columns=["bundle", "discrim_" + recon_suffix_1, "discrim_" + recon_suffix_2, "p-value"])
+    df = pd.DataFrame(columns=[
+                      "bundle", "discrim_" + recon_suffix_1, "discrim_" + recon_suffix_2, "p-value"])
     for bundle in bundle_names:
         print(bundle)
 
         # Load data for all three reconstructions
-        distances_1, subject_ids_1 = load_reconstruction_data(dice_root, recon_suffix_1, bundle)
-        distances_2, subject_ids_2 = load_reconstruction_data(dice_root, recon_suffix_2, bundle)
-        distances_3, subject_ids_3 = load_reconstruction_data(dice_root, recon_suffix_3, bundle)
+        distances_1, subject_ids_1 = load_reconstruction_data(
+            dice_root, recon_suffix_1, bundle)
+        distances_2, subject_ids_2 = load_reconstruction_data(
+            dice_root, recon_suffix_2, bundle)
+        distances_3, subject_ids_3 = load_reconstruction_data(
+            dice_root, recon_suffix_3, bundle)
 
         # Find common subject IDs across all three reconstructions
         common_subids = np.intersect1d(
@@ -77,18 +92,25 @@ def get_discrim_two_sample(dice_root: str, recon_suffix_1: str, recon_suffix_2: 
         )
 
         # Filter distance matrices and subject IDs for common combinations
-        subject_ids_1, distances_1 = filter_common(subject_ids_1, distances_1, common_subids)
-        subject_ids_2, distances_2 = filter_common(subject_ids_2, distances_2, common_subids)
-        subject_ids_3, distances_3 = filter_common(subject_ids_3, distances_3, common_subids)
+        subject_ids_1, distances_1 = filter_common(
+            subject_ids_1, distances_1, common_subids)
+        subject_ids_2, distances_2 = filter_common(
+            subject_ids_2, distances_2, common_subids)
+        subject_ids_3, distances_3 = filter_common(
+            subject_ids_3, distances_3, common_subids)
 
         # Remove isolates
         isolate_mask = filter_isolates(common_subids)
-        subject_ids_1, distances_1 = apply_isolate_mask(subject_ids_1, distances_1, isolate_mask)
-        subject_ids_2, distances_2 = apply_isolate_mask(subject_ids_2, distances_2, isolate_mask)
-        subject_ids_1 = np.array([re.sub(r"\_run-\d+", "", sub) for sub in subject_ids_1])
+        subject_ids_1, distances_1 = apply_isolate_mask(
+            subject_ids_1, distances_1, isolate_mask)
+        subject_ids_2, distances_2 = apply_isolate_mask(
+            subject_ids_2, distances_2, isolate_mask)
+        subject_ids_1 = np.array([re.sub(r"\_run-\d+", "", sub)
+                                 for sub in subject_ids_1])
 
         # Compute discriminability for the first two reconstructions
-        two_sample_output = DiscrimTwoSample(is_dist=True).test(distances_1, distances_2, subject_ids_1, workers=workers)
+        two_sample_output = DiscrimTwoSample(is_dist=True).test(
+            distances_1, distances_2, subject_ids_1, workers=workers)
         df_row = {
             "bundle": bundle,
             "discrim_" + recon_suffix_1: two_sample_output.d1,
@@ -100,6 +122,7 @@ def get_discrim_two_sample(dice_root: str, recon_suffix_1: str, recon_suffix_2: 
 
     df.to_csv(output_path, index=False)
     return
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Reconstruction method")
@@ -147,4 +170,5 @@ if __name__ == "__main__":
     for i, bundle in enumerate(bundles):
         bundles[i] = bundle.replace("_", "").replace("-", "")
 
-    get_discrim_two_sample(DICE_ROOT, QSIRECON_SUFFIX_1, QSIRECON_SUFFIX_2, QSIRECON_SUFFIX_3, bundles, OUTPUT_PATH, WORKERS)
+    get_discrim_two_sample(DICE_ROOT, QSIRECON_SUFFIX_1, QSIRECON_SUFFIX_2,
+                           QSIRECON_SUFFIX_3, bundles, OUTPUT_PATH, WORKERS)

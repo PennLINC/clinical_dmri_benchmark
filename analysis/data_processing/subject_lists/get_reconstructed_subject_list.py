@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+import argparse
 import os
 import logging
 
 logging.basicConfig(level=logging.INFO)
-import argparse
 
 
 def get_reconstructed_subjects(qsirecon_outputs: str, qsirecon_suffix: str):

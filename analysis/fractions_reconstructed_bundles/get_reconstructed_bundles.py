@@ -3,6 +3,7 @@ import pandas as pd
 import glob
 import argparse
 
+
 def get_reconstructed_bundles(
     data_root: str, bundles: list, output_path: str, excluded_subjects: list = None
 ):
@@ -64,6 +65,7 @@ def get_reconstructed_bundles(
             df.loc[(len(df))] = df_row
     df.to_csv(output_path)
     return
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Reconstruction method")

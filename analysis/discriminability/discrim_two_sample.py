@@ -5,14 +5,16 @@ import re
 from hyppo.discrim import DiscrimTwoSample
 import argparse
 
+
 def get_discrim_two_sample(dice_root: str, recon_suffix_1: str, recon_suffix_2: str, bundle_names: list, output_path: str):
     """
 
     Parameters:
     ----------
-    
+
     """
-    df = pd.DataFrame(columns=["bundle", "discrim_" + recon_suffix_1, "discrim_" + recon_suffix_2, "null_distr"])
+    df = pd.DataFrame(columns=[
+                      "bundle", "discrim_" + recon_suffix_1, "discrim_" + recon_suffix_2, "null_distr"])
     for bundle in bundle_names:
         print(bundle)
         dice_path_1 = os.path.join(dice_root, recon_suffix_1, bundle + ".csv")
@@ -46,22 +48,25 @@ def get_discrim_two_sample(dice_root: str, recon_suffix_1: str, recon_suffix_2: 
         # Step 1: Find the common subject-run combinations
         common_subids = np.intersect1d(subject_ids_1, subject_ids_2)
         # Step 2: Find indices of common combinations in both vectors
-        indices1 = [i for i, sub in enumerate(subject_ids_1) if sub in common_subids]
-        indices2 = [i for i, sub in enumerate(subject_ids_2) if sub in common_subids]
+        indices1 = [i for i, sub in enumerate(
+            subject_ids_1) if sub in common_subids]
+        indices2 = [i for i, sub in enumerate(
+            subject_ids_2) if sub in common_subids]
         filtered_subids_1 = subject_ids_1[indices1]
         filtered_subids_2 = subject_ids_2[indices2]
         print((filtered_subids_1 == filtered_subids_2).all())
         # Step 3: Filter matrices accordingly
         filtered_distances_1 = distances_1[np.ix_(indices1, indices1)]
-        filtered_distances_2 = distances_2[np.ix_(indices2, indices2)]        
+        filtered_distances_2 = distances_2[np.ix_(indices2, indices2)]
         common_subids = np.array(
             [re.sub(r"\_run-\d+", "", col) for col in common_subids]
-       	)
-        
+        )
+
         # remove isolates
         # Step 1: Identify entries that appear more than once
         (unique, counts) = np.unique(common_subids, return_counts=True)
-        repeated_entries = unique[counts > 1]  # Only keep entries appearing more than once
+        # Only keep entries appearing more than once
+        repeated_entries = unique[counts > 1]
 
         # Step 2: Create a mask for entries to keep
         mask = np.isin(common_subids, repeated_entries)
@@ -71,7 +76,8 @@ def get_discrim_two_sample(dice_root: str, recon_suffix_1: str, recon_suffix_2: 
         filtered_distances_1 = filtered_distances_1[np.ix_(mask, mask)]
         filtered_distances_2 = filtered_distances_2[np.ix_(mask, mask)]
 
-        two_sample_output = DiscrimTwoSample(is_dist=True).test(filtered_distances_1, filtered_distances_2, common_subids)
+        two_sample_output = DiscrimTwoSample(is_dist=True).test(
+            filtered_distances_1, filtered_distances_2, common_subids)
         df_row = {
             "bundle": bundle,
             "discrim_" + recon_suffix_1: two_sample_output.d1,
@@ -82,6 +88,7 @@ def get_discrim_two_sample(dice_root: str, recon_suffix_1: str, recon_suffix_2: 
         df = pd.concat([df, pd.DataFrame([df_row])], ignore_index=True)
     df.to_csv(output_path, index=False)
     return
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Reconstruction method")
@@ -113,4 +120,5 @@ if __name__ == "__main__":
     for i, bundle in enumerate(bundles):
         bundles[i] = bundle.replace("_", "").replace("-", "")
 
-    get_discrim_two_sample(DICE_ROOT, QSIRECON_SUFFIX_1, QSIRECON_SUFFIX_2, bundles, OUTPUT_PATH)
+    get_discrim_two_sample(DICE_ROOT, QSIRECON_SUFFIX_1,
+                           QSIRECON_SUFFIX_2, bundles, OUTPUT_PATH)
