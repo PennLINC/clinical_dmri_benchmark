@@ -11,6 +11,7 @@ dependencies:
   - nipype=1.9.1
   - numpy=1.26.4
   - pandas=2.2.2
+  - pingouin=0.5.5
   - python=3.12.5
   - scikit-learn=1.5.2
   - scipy=1.14.1
