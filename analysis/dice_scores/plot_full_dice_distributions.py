@@ -1,7 +1,7 @@
 # This script requires the csv files containing the dice sores between any two scans
 # These csvs are generated using the following script: analysis/dice_scores/calculate_dice_scores.sh
 # Since there are very many dice scores per bundle per reconstruction method,
-# this script takes quite long to run and requires a lot (~20GB) of memory
+# this script takes quite long to run and requires a lot (~55GB) of memory
 
 import numpy as np
 import seaborn as sns
