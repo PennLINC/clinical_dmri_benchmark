@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=9G
 #SBATCH --time=06:00:00
-#SBATCH --output=../logs/pnc-%A_%a.log
+#SBATCH --output=../logs/pnc_bundle_recon_GQI-%A_%a.log
 #SBATCH --array=1-1396
 
 

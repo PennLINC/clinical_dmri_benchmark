@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=2G
 #SBATCH --time=01:30:00
-#SBATCH --output=../logs/pnc-%A_%a.log
+#SBATCH --output=../logs/pnc_warp_and_mask-%A_%a.log
 #SBATCH --array=1-1397
 
 # The recon_suffix is passed as the first positional argument such that the script can be used for different reconstruction methods

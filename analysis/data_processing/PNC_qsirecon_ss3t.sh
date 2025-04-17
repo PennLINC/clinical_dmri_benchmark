@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=8G
 #SBATCH --time=02:00:00
-#SBATCH --output=../logs/pnc-%A_%a.log
+#SBATCH --output=../logs/pnc_odf_recon_SS3T-%A_%a.log
 #SBATCH --array=1-1396
 
 SIMG="${HOME}/images/qsirecon-0.23.2.sif"

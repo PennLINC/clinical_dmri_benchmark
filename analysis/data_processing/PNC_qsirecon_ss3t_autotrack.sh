@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=6G
 #SBATCH --time=12:00:00
-#SBATCH --output=../logs/pnc-%A_%a.log
+#SBATCH --output=../logs/pnc_bundle_recon_SS3T-%A_%a.log
 #SBATCH --array=1-1
 
 [ -z "${JOB_ID}" ] && JOB_ID=TEST

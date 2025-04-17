@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=16G
 #SBATCH --time=03:00:00
-#SBATCH --output=../logs/pnc-%A_%a.log
+#SBATCH --output=../logs/pnc_preprocessing-%A_%a.log
 #SBATCH --array=1-1397
 
 
