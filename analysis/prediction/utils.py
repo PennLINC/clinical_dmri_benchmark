@@ -2,20 +2,20 @@ import pandas as pd
 import os
 
 
-def get_valid_subjects(excluded_bundles: list = []) -> list:
+def get_valid_subjects(fractions_root: str, excluded_bundles: list = []) -> list:
     """
     This function returns subject ids of subjects that have all bundles considered for prediction
     reconstructed for both runs for all three reconstruction methods. Excluding bundles with low 
     reconstruction fractions increases the number of valid subjects.
 
     Args:
+      fractions_root: Path to the folder where reconstruction fractions are saved
       excluded_bundles: List of bundles that should not be included in the prediction analysis.
       Optional, defaults to empty list.
 
     Returns:
       List of valid subject ids
     """
-    fractions_root = "/data/project/clinical_dmri_benchmark/data/fractions"
     valid_subjects = []
     excluded_bundles_short = []
     for i in range(len(excluded_bundles)):

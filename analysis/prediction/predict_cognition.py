@@ -33,6 +33,7 @@ if "mean_fd" in CONFOUNDS:
     CONFOUNDS[CONFOUNDS.index("mean_fd")] = "mean_fd_" + RUN
 
 # Set global variables that stay the same for all predictions
+RECONSTRUCTION_FRACTION_ROOT = "/data/project/clinical_dmri_benchmark/data/fractions"
 TARGET_CSV = "/data/project/clinical_dmri_benchmark/data/targets/n9498_cnb_zscores_all_fr_20161215.csv"
 CONVERSION_CSV = "/data/project/clinical_dmri_benchmark/data/targets/bblid_scanid_sub.csv"
 CONFOUND_CSV = "/data/project/clinical_dmri_benchmark/data/confounds/confounds.csv"
@@ -58,7 +59,8 @@ ALPHA = [0.001, 0.1, 1.0, 10.0, 100.0, 500.0, 1000.0, 5000.0, 10000.0]
 
 np.random.seed(RANDOM_STATE)
 
-valid_subjects = get_valid_subjects(EXCLUDED_BUNDLES)
+valid_subjects = get_valid_subjects(
+    RECONSTRUCTION_FRACTION_ROOT, EXCLUDED_BUNDLES)
 
 # Prep feature, target and confound csv
 df_features = pd.read_csv(os.path.join(
