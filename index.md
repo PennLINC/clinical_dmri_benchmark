@@ -93,8 +93,11 @@ The MNI reference image from QSIPrep was stored at `/cbica/comp_space/clinical_d
 # Data Processing
 ## 3: Pre-process the data using QSIPrep
 ### 3.1: Get subject list for pre-processing
-Run `~/analysis/data_processing/subject_lists/get_subject_list.py`.
-<br>
+```
+micromamba activate clinical_dmri_benchmark
+cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists
+python3 get_subject_list.py
+```
 → This creates a list of all subjects with two dMRI scans and a T1w scan that have not been pre-processed yet
 
 ### 3.2: Run pre-processing
