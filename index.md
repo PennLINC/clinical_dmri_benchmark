@@ -86,6 +86,9 @@ This environment was only used to plot the the population maps over the atlas bu
 The raw PNC data in BIDS format was stored at    `/cbica/comp_space/clinical_dmri_benchmark/PNC/BIDS` . 
 <br>
 Clone the dataset from PMACs as described [here](https://pennlinc.github.io/docs/DataWorkflows/FetchingYourPMACSData/). When using `datalad get` , it is only necessary to get the T1w images (`*_T1w.json` , `*_T1w.nii.gz` ) and the diffusion data (`*_dwi.bval`, `*_dwi.bvec,` `*_dwi.nii.gz,` `*_dwi.json`).
+<br>
+<br>
+The MNI reference image from QSIPrep was stored at `/cbica/comp_space/clinical_dmri_benchmark/PNC/MNI/mni_1mm_t1w_lps_brain.nii.gz`. It can be downloaded from [here](mni_1mm_t1w_lps_brain.nii.gz).
 
 # Data Processing
 ## 3: Pre-process the data using QSIPrep
