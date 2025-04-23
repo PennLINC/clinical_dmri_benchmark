@@ -334,7 +334,7 @@ Adjust the `BUNDLE_STATS_ROOT` at the top of the notebook to where the files wer
 <br>
 Adjust the `FEATURE_OF_INTEREST` variable to `total_volume_mm3` , `dti_fa` and `md` to create the plots for all three features.
 
-### 11.2 Prepare confound csv
+### 11.3 Prepare confound csv
 ```
 cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/prediction/prep_prediction_files
 micromamba activate clinical_dmri_benchmark
