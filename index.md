@@ -51,7 +51,7 @@ The project directory on CUBIC is `/cbica/projects/clinical_dmri_benchmark`. The
 | `~/clinical_dmri_benchmark`                          | Github repo: Code for data processing, analysis and figures                                                                                 |
 | `~/images`                                           | Singularity images for qsiprep and qsirecon                                                                                                  |
 | `~/results`                                          | Outputs of data processing and analysis (sub-folders for different steps of the analysis: pre-processing, reconstruction, dice scores, etc.) |
-| `~/data`                                             | Additional data needed for analysis (e.g. atlas bundles, QC files, prediction confounds and targets)                                         |
+| `~/data`                                             | Additional data needed for analysis that is too large to be stored in the GitHub repo, can't be shared publicly, or can be easily downloaded and therefore doesn't need to be shared through the repo  (e.g. atlas bundles, QC files, prediction confounds and targets)                                         |
 | `/cbica/comp_space/`<br>`clinical_dmri_benchmark/PNC/BIDS` | Raw PNC data (downloaded and cloned using datalad)                                                                                           |
 | `/cbica/comp_space/`<br>`clinical_dmri_benchmark/MNI`      | Reference T1w MNI image                                                                                                                      |
 
