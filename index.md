@@ -197,7 +197,12 @@ python3 get_reconstructed_bundles.py --recon_suffix SS3Tautotrack
 ```
 
 ### 7.2: Plot the fractions 🎨
-Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/fractions_reconstructed_bundles/plot_recon_fractions.ipynb` to create the plot of reconstruction fractions.
+This notebook was run locally and the following files had to be moved to the local setup:
+- `/cbica/projects/clinical_dmri_benchmark/results/qsirecon_outputs/reconstructed_bundles_GQIautotrack.csv`
+- `/cbica/projects/clinical_dmri_benchmark/results/qsirecon_outputs/reconstructed_bundles_CSDautotrack.csv`
+- `/cbica/projects/clinical_dmri_benchmark/results/qsirecon_outputs/reconstructed_bundles_SS3Tautotrack.csv` <br>
+
+Adjust `CSV_ROOT` at the top of the script to where you saved the required files and run `<GIT_REPRO_HOME>/analysis/fractions_reconstructed_bundles/plot_recon_fractions.ipynb` to create the plot of reconstruction fractions.
 
 ## 8: Dice Scores
 
