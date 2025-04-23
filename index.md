@@ -285,6 +285,7 @@ sbatch calculate_overlay_maps.sh SS3Tautotrack
 First, get T1w images from MNIb and MNIc space from template flow using datalad. These should be saved here:
 - `/cbica/projects/clinical_dmri_benchmark/data/templateflow/tpl-MNI152NLin2009bAsym/tpl-MNI152NLin2009bAsym_res-1_T1w.nii.gz`
 - `/cbica/projects/clinical_dmri_benchmark/data/templateflow/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz`
+<br>
 ```
 # Calculate transform using the two T1w images by running
 cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/overlap
