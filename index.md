@@ -178,9 +178,6 @@ sbatch warp_bundles_to_mni_and_mask.sh SS3Tautotrack
 ```
 
 ## 6: Create list of excluded subjects
-After processing the data, a list of subjects that will not be included in the analysis is created.
-<br>
-To derive this list, run `~/analysis/data_processing/subject_lists/qc.py`
 ```
 micromamba activate clinical_dmri_benchmark
 cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists
