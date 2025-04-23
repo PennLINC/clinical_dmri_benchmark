@@ -215,10 +215,16 @@ sbatch calculate_dice_scores.sh SS3Tautotrack
 ```
 
 ### 8.2: Plot full distributions 🎨
-Run `~/analysis/dice_scores/plot_full_dice_distributions.py` to plot the full distributions of dice scores for each reconstruction method. The reconstruction method needs to be set at the top of the script as `GQI` , `CSD`  or `SS3T` .
+This script was run locally and requires the csv files containing the dice scores between any two scans to be moved to local from `/cbica/projects/clinical_dmri_benchmark/results/dices`. Adjust `DICE_ROOT` at the top of the script to where you saved the required files on the local setup. This is also where the high quality versions of the files are saved to as they are too large to be saved in the GitHub repro.
+```
+micromamba activate clinical_dmri_benchmark
+python3 <GIT_REPRO_HOME>/analysis/dice_scores/plot_full_dice_distributions.py
+```
+The reconstruction method needs to be set at the top of the script as `GQI` , `CSD`  or `SS3T` .
 
 ### 8.3: Plot median distributions 🎨
-Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/dice_scores/plot_median_dice_scores.ipynb` to plot the median (median within and between dice score per bundle) distributions for all reconstruction methods.
+As above, this notebook was also run locally and requires the files from `/cbica/projects/clinical_dmri_benchmark/results/dices`. The `DICE_ROOT` at the top of the notbeook needs to be adjusted to where the files were saved locally.
+Run `<GIT_REPRO_HOME>/analysis/dice_scores/plot_median_dice_scores.ipynb` to plot the median (median within and between dice score per bundle) distributions for all reconstruction methods.
 
 ## 9: Discriminability
 
@@ -232,7 +238,14 @@ sbatch discrim_two_sample_filtered.sh CSDautotrack SS3Tautotrack GQIautotrack
 Calculation of discriminability and determination of significant differences will be perfromed for the first two arguments, the third argument is passed to perform the filtering and only include scans for which a given bundle was reconstructed for all three methods.
 
 ### 9.2: Plot discriminability 🎨
-Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/discriminability/plot_discrim_two_sample.ipynb` to create the plot comparing discriminability between reconstruction methods for all reconstructed WM bundles.
+The notebook was run locally and the following files had to be moved to local to run the code:
+- `/cbica/projects/clinical_dmri_benchmark/results/discriminability/two_sample_GQIautotrack_CSDautotrack.csv`
+- `/cbica/projects/clinical_dmri_benchmark/results/discriminability/two_sample_CSDautotrack_SS3Tautotrack.csv`
+- `/cbica/projects/clinical_dmri_benchmark/results/discriminability/two_sample_GQIautotrack_SS3Tautotrack.csv` <br>
+
+Adjust `DISCRIM_CSV_ROOT` at the top of the script with where you saved the required files on the local setup. This is also where a merged csv will be saved.
+<br>
+Run `<GIT_REPRO_HOME>/analysis/discriminability/plot_discrim_two_sample.ipynb` to create the plot comparing discriminability between reconstruction methods for all reconstructed WM bundles.
 
 ## 10: Bundle Completeness
 ### 10.1: Calculate population maps
@@ -266,15 +279,18 @@ bash mask_and_warp_atlas_bundles.sh
 ```
 
 ### 10.4: Plot population maps over atlas bundles 🎨
-This code is largely based on code by Matthew Cieslak.
+The code for plotting is largely based on code by Matthew Cieslak.
 
-This script requires it’s own python environment!
-<br>
+The script requires it’s own python environment and needs to be run somewhere with visual output! Here, the script was run on a local laptop. The following files are required:
+- Atlas bundles in MNI space: Copy from `/cbica/projects/clinical_dmri_benchmark/data/atlas_bundles`
+- Population maps: Copy from `/cbica/projects/clinical_dmri_benchmark/results/overlay_maps`
+- MNI reference image: Downloaded [here](https://github.com/PennLINC/qsiprep/blob/0.21.4/qsiprep/data/mni_1mm_t1w_lps_brain.nii.gz).
+- Surfaces: Download [here](https://osf.io/4mw3a/). <br>
+
+To run the code:
 - Activate environment in terminal: `micromamba activate myavi`
 - Start interactive python session in terminal with `ipython --gui=qt5`
-- Run code from `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/overlay_maps/plot_population_map_on_atlas.py` in interactive python session to create the plots.
-
-The required surfaces for the figure can be downloaded [here](https://osf.io/4mw3a/).
+- Run code from `<GIT_REPRO_HOME>/analysis/overlay_maps/plot_population_map_on_atlas.py` in interactive python session to create the plots.
 
 ### 10.5: Calculate sensitivity and specificity of reconstructed bundles with atlas bundles
 ```
@@ -286,7 +302,12 @@ sbatch sensitivity_specificity.sh SS3Tautotrack
 This code is largely based on code by Valerie Sydnor.
 
 ### 10.6: Plot sensitivity and specificity 🎨
-Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/overlap/plot_sensitivity_specificity.ipynb` to create the plots of sensitivity and specificity.
+The notebook was run locally. The following files need to be copied to local for the code to run:
+- `/cbica/projects/clinical_dmri_benchmark/results/overlap/GQIautotrack_overlap.csv`
+- `/cbica/projects/clinical_dmri_benchmark/results/overlap/CSDautotrack_overlap.csv`
+- `/cbica/projects/clinical_dmri_benchmark/results/overlap/SS3Tautotrack_overlap.csv` <br>
+
+Adjust `OVERLAP_ROOT` at the top of the notebook to where you saved the required files locally and run `<GIT_REPRO_HOME>/analysis/overlap/plot_sensitivity_specificity.ipynb` to create the plots of sensitivity and specificity. The overall median plot will be saved in the GitHub repro, the separate plots for each of the bundle will be saved at `OVERLAP_ROOT`.
 
 # Prediction Analysis
 CSVs for confounds and targets can be found at `/cbica/projects/clinical_dmri_benchmark/data/prediction` on CUBIC.
@@ -306,9 +327,12 @@ python3 create_feature_csvs.py
 ```
 
 ### 11.2: Calculate and plot feature ICCs 🎨
-Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/prediction/plot_feature_icc.ipynb` 
+This notebook was run locally. The following files are required and need to be moved to the local setup:
+<br> `/cbica/projects/clinical_dmri_benchmark/results/bundle_stats/<reconstruction>autotrack_<run>.csv`, with `<reconstruction>` in [GQI, CSD, SS3T] and `<run>` in [run-01, run-02].
+
+Adjust the `BUNDLE_STATS_ROOT` at the top of the notebook to where the files were saved locally and run `<GIT_REPRO_HOME>/analysis/prediction/plot_feature_icc.ipynb`. 
 <br>
-This has to be run for the three different features considered here, i.e., `total_volume_mm3` , `dti_fa` , `md` . The current feature for which the plot is created can be adjusted at the beginning of the script.
+Adjust the `FEATURE_OF_INTEREST` variable to `total_volume_mm3` , `dti_fa` and `md` to create the plots for all three features.
 
 ### 11.2: Prepare confound csv
 ```
@@ -334,13 +358,17 @@ Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/pr
 ## Step 14: Plot Prediction Results
 
 ### 14.1: Plot prediction accuracy 🎨
-Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/prediction/plot_prediction_results.ipynb` to plot the prediction accuracy for the main analysis.
+This notbook was run locally and requires the prediction result csvs from `/cbica/projects/clinical_dmri_benchmark/results/prediction/remove_confounds_features`.
+<br>
+Adjust the `RESULT_ROOT` at the top of the notebook to where you saved the prediction results on the local setup and run `<GIT_REPRO_HOME>/analysis/prediction/plot_prediction_results.ipynb` to plot the prediction accuracy for the main analysis.
 
 - To plot results for the supplementary analysis including TBV as a confound, set `TBV_AS_CONFOUND = True` at the beginning of the script.
 - To plot results for the supplementary analysis for the two additional cognition targets set `TARGET = "exeAZv2"` or `TARGET = "ciqAZv2"` at the beginning of the script.
 
 ### 14.2: Plot prediction similarity 🎨
-Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/prediction/plot_prediction_reliability.ipynb` to plot the similarity between prediction from different scans for the main analysis.
+This notbook was run locally and requires the prediction inspector csvs from `/cbica/projects/clinical_dmri_benchmark/results/prediction/remove_confounds_features`.
+<br>
+Adjust the `RESULT_ROOT` at the top of the notebook to where you saved the prediction results on the local setup and run `<GIT_REPRO_HOME>/analysis/prediction/plot_prediction_reliability.ipynb` to plot the similarity between prediction from different scans for the main analysis.
 
 - To plot results for the supplementary analysis including TBV as a confound, set `TBV_AS_CONFOUND = True` at the beginning of the script.
 - To plot results for the supplementary analysis for the two additional cognition targets set `TARGET = "exeAZv2"` or `TARGET = "ciqAZv2"` at the beginning of the script.
