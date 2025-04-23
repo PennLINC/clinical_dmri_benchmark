@@ -284,8 +284,8 @@ The code for plotting is largely based on code by Matthew Cieslak.
 The script requires it’s own python environment and needs to be run somewhere with visual output! Here, the script was run on a local laptop. The following files are required:
 - Atlas bundles in MNI space: Copy from `/cbica/projects/clinical_dmri_benchmark/data/atlas_bundles`
 - Population maps: Copy from `/cbica/projects/clinical_dmri_benchmark/results/overlay_maps`
-- MNI reference image: Downloaded [here](https://github.com/PennLINC/qsiprep/blob/0.21.4/qsiprep/data/mni_1mm_t1w_lps_brain.nii.gz).
-- Surfaces: Download [here](https://osf.io/4mw3a/). <br>
+- MNI reference image: Download from [QSIPrep GitHub repro](https://github.com/PennLINC/qsiprep/blob/0.21.4/qsiprep/data/mni_1mm_t1w_lps_brain.nii.gz).
+- Surfaces: Download from [neuromaps](https://osf.io/dv28y). <br>
 
 To run the code:
 - Activate environment in terminal: `micromamba activate myavi`
