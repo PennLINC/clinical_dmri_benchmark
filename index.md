@@ -343,9 +343,13 @@ python3 prepare_confounds_csv.py
 The script extracts the head movement for all scans and creates one confound csv containing all confounds of interest for all subjects.
 
 ## 12: Run Prediction
-Prediction was run on a different system, so the features, confound and target files were moved there.
+Prediction was run on a different system. Following files need to be moved to the other cluster to run the prediction:
+- Confounds: `/cbica/projects/clinical_dmri_benchmark/data/prediction/confounds/confounds.csv`
+- ID conversion: `/cbica/projects/clinical_dmri_benchmark/data/QC/bblid_scanid_sub.csv`
+- Features: `/cbica/projects/clinical_dmri_benchmark/results/bundle_stats/<reconstruction>_<run>.csv`
+- Targets: `/cbica/projects/clinical_dmri_benchmark/data/prediction/targets/n9498_cnb_zscores_all_fr_20161215.csv`
 
-The prediction performed in the main analysis can be run by submitting `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/prediction/predict_cognition.submit` to the cluster.
+The prediction performed in the main analysis can be run by submitting `<GIT_REPO_HOME>/analysis/prediction/predict_cognition.submit` to the cluster.
 
 - To perform the supplementary analysis including TBV as a confound replace all instances of `sex,ageAtScan1,mean_fd` with `sex,ageAtScan1,mean_fd,mprage_antsCT_vol_TBV` in the submit file.
 - To perform the supplementary analysis for predicting two additional cognitive traits replace all instances of `cpxresAZv2` with either `exeAZv2` or `ciqAZv2` .
