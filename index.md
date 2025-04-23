@@ -361,7 +361,11 @@ The prediction performed in the main analysis can be run by submitting `<GIT_REP
 The results were copied to CUBIC and can be found at `/cbica/projects/clinical_dmri_benchmark/results/prediction/remove_confounds_features`
 
 ## 13 Compare Prediction Model Performances
-Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/prediction/compare_model_performances.py` to obtain a csv with p-values that imply if there is a significant difference between two considered models.
+This script was run locally and requires the prediction result csvs from `/cbica/projects/clinical_dmri_benchmark/results/prediction/remove_confounds_features`.
+<br>
+Adjust the `RESULT_ROOT` at the top of the notebook to where you saved the prediction results on the local setup and run `<GIT_REPO_HOME>/analysis/prediction/compare_model_performances.py` to obtain a csv with p-values that imply if there is a significant difference between two considered models.
+<br>
+The resulting output csv with the corrected p-values will be saved under the `RESULT_ROOT`.
 
 ## 14 Plot Prediction Results
 
