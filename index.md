@@ -48,7 +48,11 @@ The project directory on CUBIC is `/cbica/projects/clinical_dmri_benchmark`. The
 
 | **Directory**                                        | **Description**                                                                                                                              |
 |------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
-| `~/clinical_dmri_benchmark`                          | Github repo: Code for data processing, analysis and figures                                                                                 |
+| `~/clinical_dmri_benchmark`                          | GitHub repo                                                   |
+| `~/clinical_dmri_benchmark/analysis`                          | GitHub repo: Code for data processing, analysis and figure plotting divided into sub-folders                                                                                |
+| `~/clinical_dmri_benchmark/data`                          | GitHub repo: data used by several scripts in the repo (e.g. bundle names)                                                                                |
+| `~/clinical_dmri_benchmark/figures`                          | GitHub repo: Figures produced by code in the `analysis` folder                   |
+| `~/clinical_dmri_benchmark/software`                          | GitHub repo: Requirement files for python environments                  |
 | `~/images`                                           | Singularity images for qsiprep and qsirecon                                                                                                  |
 | `~/results`                                          | Outputs of data processing and analysis (sub-folders for different steps of the analysis: pre-processing, reconstruction, dice scores, etc.) |
 | `~/data`                                             | Additional data needed for analysis that is too large to be stored in the GitHub repo, can't be shared publicly, or can be easily downloaded and therefore doesn't need to be shared through the repo  (e.g. atlas bundles, QC files, prediction confounds and targets)                                         |
