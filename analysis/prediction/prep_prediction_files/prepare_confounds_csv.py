@@ -4,7 +4,7 @@ import glob
 import numpy as np
 
 OUTPUT_ROOT = "/cbica/projects/clinical_dmri_benchmark/results/qsiprep_outputs"
-CONFOUNDS_ROOT = "/cbica/projects/clinical_dmri_benchmark/data//prediction/confounds"
+CONFOUNDS_ROOT = "/cbica/projects/clinical_dmri_benchmark/data/prediction/confounds"
 ID_CONVERSION_PATH = "/cbica/projects/clinical_dmri_benchmark/data/QC/bblid_scanid_sub.csv"
 subject_ids = [f for f in os.listdir(
     OUTPUT_ROOT) if os.path.isdir(os.path.join(OUTPUT_ROOT, f))]
