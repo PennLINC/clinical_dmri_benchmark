@@ -59,7 +59,6 @@ The project directory on CUBIC is `/cbica/projects/clinical_dmri_benchmark`. The
 # Software and Data
 ## 1: Install required software and setup python environment
 ### 1.1: Singularity images for qsiprep and qsirecon
-<br>
 QSIPrep: `apptainer build qsiprep-0.21.4.sif docker://pennlinc/qsiprep:0.21.4`
 <br>
 QSIRecon: `apptainer build qsirecon-0.23.2.sif docker://pennlinc/qsirecon:0.23.2`
@@ -124,7 +123,6 @@ sbatch PNC_qsirecon_gqi_autotrack.sh
 ```
 
 ### 4.2: CSD
-
 The reconstruction using CSD is run in two steps: First we reconstruct the ODFs using CSD in QSIPrep and then we run Autotrack in DSIStudio based on the CSD ODFs.
 
 **4.2.1: Get subject list for CSD reconstruction**
@@ -205,7 +203,6 @@ sbatch warp_bundles_to_mni_and_mask.sh SS3Tautotrack
 ```
 
 ## 6: Create list of excluded subjects
-
 After processing the data, a list of subjects that will not be included in the analysis is created.
 <br>
 To derive this list, run `~/analysis/data_processing/subject_lists/qc.py`
@@ -217,9 +214,7 @@ python3 qc.py
 This list checks for subjects with acquisition variants, subjects that could not be pre-processed or reconstructed and subjects that failed QC based on Roalf et al., 2016.
 
 # Bundle Reliability Analysis
-
 ## 7: Reconstruction Fractions
-
 ### 7.1: Determine fractions of reconstructed bundles
 ```
 micromamba activate clinical_dmri_benchmark
@@ -263,7 +258,6 @@ Calculation of discriminability and determination of significant differences wil
 Run `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/discriminability/plot_discrim_two_sample.ipynb` to create the plot comparing discriminability between reconstruction methods for all reconstructed WM bundles.
 
 ## 10: Bundle Completeness
-
 ### 10.1: Calculate population maps
 ```
 cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/overlay_maps
@@ -284,8 +278,8 @@ sbatch calculate_overlay_maps.sh SS3Tautotrack
 ### 10.3: Mask atlas bundles and warp to MNIc space
 First, get T1w images from MNIb and MNIc space from template flow using datalad. These should be saved here:
 - `/cbica/projects/clinical_dmri_benchmark/data/templateflow/tpl-MNI152NLin2009bAsym/tpl-MNI152NLin2009bAsym_res-1_T1w.nii.gz`
-- `/cbica/projects/clinical_dmri_benchmark/data/templateflow/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz`
-<br>
+- `/cbica/projects/clinical_dmri_benchmark/data/templateflow/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz`<br>
+
 ```
 # Calculate transform using the two T1w images by running
 cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/overlap
@@ -348,7 +342,6 @@ python3 prepare_confounds_csv.py
 The script extracts the head movement for all scans and creates one confound csv containing all confounds of interest for all subjects.
 
 ## 12: Run Prediction
-
 Prediction was run on a different system, so the features, confound and target files were moved there.
 
 The prediction performed in the main analysis can be run by submitting `/cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/prediction/predict_cognition.submit` to the cluster.
