@@ -122,63 +122,38 @@ cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data
 sbatch PNC_qsirecon_gqi_autotrack.sh
 ```
 
-### 4.2: CSD
-The reconstruction using CSD is run in two steps: First we reconstruct the ODFs using CSD in QSIRecon and then we run Autotrack in DSIStudio based on the CSD ODFs.
+### 4.2: CSD and SS3T
+The reconstruction using CSD and SS3T is run in two steps: First we reconstruct the ODFs using CSD / SS3T in QSIRecon and then we run Autotrack in DSIStudio based on the CSD / SS3T ODFs.
 
-**4.2.1: Get subject list for CSD reconstruction**
+**4.2.1: Get subject lists for ODF reconstruction**
 ```
 micromamba activate clinical_dmri_benchmark
 cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists
 python3 get_preprocessed_subject_list.py --recon_suffix CSD
+python3 get_preprocessed_subject_list.py --recon_suffix SS3T
 ```
-This creates a list of subjects that have been pre-processed and not yet reconstructed using CSD.
+This creates a list of subjects that have been pre-processed and not yet reconstructed using CSD / SS3T.
 
-**4.2.2: Run CSD ODF reconstruction**
+**4.2.2: Run ODF reconstruction**
 ```
 cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing
 sbatch PNC_qsirecon_csd.sh
+sbatch PNC_qsirecon_ss3t.sh
 ```
 
-**4.2.3: Get subject list for CSDautotrack reconstruction**
+**4.2.3: Get subject lists for bundle reconstruction**
 ```
 micromamba activate clinical_dmri_benchmark
 cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists
 python3 get_preprocessed_subject_list.py --recon_suffix CSDautotrack
+python3 get_preprocessed_subject_list.py --recon_suffix SS3Tautotrack
 ```
-This creates a list of subjects that has been pre-processed and not yet reconstructed using CSDautotrack
+This creates a list of subjects that have been pre-processed and not yet reconstructed using CSDautotrack / SS3Tautotrack.
 
-**4.2.4: Run autotrack based on CSD reconstruction:**
+**4.2.4: Run autotrack based on CSD / SS3T reconstruction:**
 ```
 cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing
 sbatch PNC_qsirecon_csd_autotrack.sh
-```
-
-### 4.3: SS3T
-For reconstructing WM bundles based on SS3T ODFs we run the same two steps as for CSD.
-
-**4.3.1: Get subject list for SS3T reconstruction** <br>
-```
-micromamba activate clinical_dmri_benchmark
-cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists
-python3 get_preprocessed_subject_list.py --recon_suffix SS3T
-```
-
-**4.3.2: Run SS3T ODF reconstruction**
-```
-cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing
-sbatch PNC_qsirecon_ss3t.sh
-```
-
-**4.3.3: Get subject list for SS3Tautotrack reconstruction**
-```
-micromamba activate clinical_dmri_benchmark
-cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing/subject_lists
-python3 get_preprocessed_subject_list.py --recon_suffix SS3Tautotrack
-```
-
-**4.3.4: Run autotrack based on SS3T reconstruction:**
-```
-cd /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/analysis/data_processing
 sbatch PNC_qsirecon_ss3t_autotrack.sh
 ```
 
