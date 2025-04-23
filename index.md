@@ -123,7 +123,7 @@ sbatch PNC_qsirecon_gqi_autotrack.sh
 ```
 
 ### 4.2: CSD
-The reconstruction using CSD is run in two steps: First we reconstruct the ODFs using CSD in QSIPrep and then we run Autotrack in DSIStudio based on the CSD ODFs.
+The reconstruction using CSD is run in two steps: First we reconstruct the ODFs using CSD in QSIRecon and then we run Autotrack in DSIStudio based on the CSD ODFs.
 
 **4.2.1: Get subject list for CSD reconstruction**
 ```
