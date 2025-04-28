@@ -83,7 +83,7 @@ uv pip install -r ~/software/cdbm_environment.txt
 
 ### 1.3 Setup mayavi python environment
 This environment was only used to plot the the population maps over the atlas bundles.
-`micromamba create -n mayavi --file ~/software/mayavi_environment.yml`
+`micromamba create -n mayavi --file /cbica/projects/clinical_dmri_benchmark/clinical_dmri_benchmark/software/mayavi_environment.yml`
 
 ## 2 Get PNC data in BIDS format
 The raw PNC data in BIDS format was stored at    `/cbica/comp_space/clinical_dmri_benchmark/PNC/BIDS` . 
